@@ -1,0 +1,17 @@
+{
+    "comments": {
+        "author": "Arnold Schilham, UMCU", 
+        "creator": "generate_config_json.py version 20160822", 
+        "description": "DX/Normi13 module for Philips Digital Diagnost R4"
+    }, 
+    "results": [
+        {
+            "constraint_period": 14, 
+            "description": "date and time of acquisition", 
+            "display_level": 2, 
+            "display_name": "DateTime", 
+            "name": "AcquisitionDateTime", 
+            "units": ""
+        }
+    ]
+}

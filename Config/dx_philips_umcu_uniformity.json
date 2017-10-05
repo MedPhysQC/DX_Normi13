@@ -1,0 +1,56 @@
+{
+    "actions": {
+        "acqdatetime": {
+            "filters": {}, 
+            "params": {}
+        }, 
+        "header_series": {
+            "filters": {}, 
+            "params": {
+                "artefactborderpx": "35;35;35;35", 
+                "auto_suffix": true, 
+                "linepair_type": "None", 
+                "roomname": "AZU", 
+                "tablepidmm": 70, 
+                "wallpidmm": 84
+            }
+        }, 
+        "uniformity_series": {
+            "filters": {}, 
+            "params": {
+                "artefactborderpx": "35;35;35;35", 
+                "auto_suffix": true, 
+                "linepair_type": "None", 
+                "roomname": "AZU", 
+                "tablepidmm": 70, 
+                "wallpidmm": 84
+            }
+        }
+    }, 
+    "comments": {
+        "author": "Arnold Schilham, UMCU", 
+        "creator": "generate_config_json.py version 20160822", 
+        "description": "DX/QCXRayUniformity module for Philips Digital Diagnost R3", 
+        "params": {
+            "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
+            "tablepidmm": "distance between phantom on table top and image detector", 
+            "wallpidmm": "distance between phantom on wall stand and image detector"
+        }, 
+        "usage": [
+            "params that must be set for both actions below:", 
+            "  \"roomname\": \"Bucky1\" # any identifier", 
+            "and either (to set autodetection of table/wall stand):  \"tablepidmm\": 85 # distance [mm] between phantom on table and image detector", 
+            "  \"wallpidmm\": 85 # distance [mm] between phantom on wall and image detector", 
+            "or (to set forced usage of one distance e.g. for portable detectors):", 
+            "  \"pidmm\": 0 # distance [mm] between phantom and image detector", 
+            "optionally stands can be identified by their detectorId:", 
+            "  \"detector_names\": \"SN1525UU;Tafel|SN152590;Wand\"", 
+            "optionally the source to detector distance can be set manually (with autodetection of table/wall stand)", 
+            "  \"tablesidmm\": 1150 # distance [mm] between source and image detector in table", 
+            "  \"wallsidmm\": 2000 # distance [mm] between source and image detector in wall", 
+            "or (to set forced usage of one distance e.g. for portable detectors):", 
+            "  \"sidmm\": 1150 # distance [mm] between source and image detector"
+        ], 
+        "version": "20160825"
+    }
+}

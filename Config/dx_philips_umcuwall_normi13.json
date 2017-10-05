@@ -1,0 +1,63 @@
+{
+    "actions": {
+        "acqdatetime": {
+            "filters": {}, 
+            "params": {}
+        }, 
+        "header_series": {
+            "filters": {}, 
+            "params": {
+                "auto_suffix": false, 
+                "linepair_type": "RXT02", 
+                "pidmm": 84, 
+                "roomname": "AZU", 
+                "xymm0.6": "-83.0;-25.0", 
+                "xymm1.0": "-99.0;-8.0"
+            }
+        }, 
+        "qc_series": {
+            "filters": {}, 
+            "params": {
+                "auto_suffix": false, 
+                "linepair_type": "RXT02", 
+                "pidmm": 84, 
+                "roomname": "AZU", 
+                "xymm0.6": "-83.0;-25.0", 
+                "xymm1.0": "-99.0;-8.0"
+            }
+        }
+    }, 
+    "comments": {
+        "author": "Arnold Schilham, UMCU", 
+        "creator": "generate_config_json.py version 20160822", 
+        "description": "DX/Normi13 module for Philips Digital Diagnost R3", 
+        "params": {
+            "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
+            "linepair_type": "must be RXT02 or typ38", 
+            "pidmm": "distance between phantom and image detector", 
+            "roomname": "your identifier of this room", 
+            "xymm0.6": "position of the dot in 0.6", 
+            "xymm1.0": "position of the dot in 1.0"
+        }, 
+        "usage": [
+            "params that must be set for both actions below:", 
+            "  \"roomname\": \"Bucky1\" # any identifier", 
+            "and either (to set autodetection of table/wall stand):  \"tablepidmm\": 85 # distance [mm] between phantom on table and image detector", 
+            "  \"wallpidmm\": 85 # distance [mm] between phantom on wall and image detector", 
+            "or (to set forced usage of one distance e.g. for portable detectors):", 
+            "  \"pidmm\": 0 # distance [mm] between phantom and image detector", 
+            "params that can be set if the line pair phantom is not found correctly:", 
+            "  \"linepair_typ\": \"RXT02\"", 
+            "  \"xymm0.6\": \"-83.0;-25.0\" # the location of the dot in 0.6 on the line pair pattern", 
+            "  \"xymm1.8\": \"-99.0;-8.0\"  # the location of the dot in 1.8 on the line pair pattern", 
+            "optionally stands can be identified by their detectorId:", 
+            "  \"detector_names\": \"SN1525UU;Tafel|SN152590;Wand\"", 
+            "optionally the source to detector distance can be set manually (with autodetection of table/wall stand)", 
+            "  \"tablesidmm\": 1150 # distance [mm] between source and image detector in table", 
+            "  \"wallsidmm\": 2000 # distance [mm] between source and image detector in wall", 
+            "or (to set forced usage of one distance e.g. for portable detectors):", 
+            "  \"sidmm\": 1150 # distance [mm] between source and image detector"
+        ], 
+        "version": "20160825"
+    }
+}
