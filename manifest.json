@@ -6,7 +6,7 @@
     "module": {
         "description": "DX Normi13_Uniformity",
         "executable": "n13_wadwrapper.py",
-        "name": "DX_Normi13_Uniformity",
+        "name": "DX_Normi13",
         "code": "python",
         "dependencies": [
             "pillow",
