@@ -1,0 +1,57 @@
+{
+    "actions": {
+        "acqdatetime": {
+            "filters": {}, 
+            "params": {}
+        }, 
+        "header_series": {
+            "filters": {}, 
+            "params": {
+                "auto_suffix": true, 
+                "detector_names": "SN152495;Tafel|SN152508;Wand", 
+                "roomname": "WKZ1", 
+                "tablepidmm": 70, 
+                "wallpidmm": 50
+            }
+        }, 
+        "uniformity_series": {
+            "filters": {}, 
+            "params": {
+                "artefactborderpx": "35;35;35;35", 
+                "auto_suffix": true, 
+                "detector_names": "SN152495;Tafel|SN152508;Wand", 
+                "linepair_type": "None", 
+                "roomname": "WKZ1", 
+                "tablepidmm": 70, 
+                "wallpidmm": 50
+            }
+        }
+    }, 
+    "comments": {
+        "author": "Arnold Schilham, UMCU", 
+        "creator": "generate_config_json.py version 20180219", 
+        "description": "DX/Uniformity for Philips Digital Diagnost R4", 
+        "usage": [
+            "params that must be set for both actions below:", 
+            "  \"roomname\": \"Bucky1\" # any identifier", 
+            "and either (to set autodetection of table/wall stand):  \"tablepidmm\": 85 # distance [mm] between phantom on table and image detector", 
+            "  \"wallpidmm\": 85 # distance [mm] between phantom on wall and image detector", 
+            "or (to set forced usage of one distance e.g. for portable detectors):", 
+            "  \"pidmm\": 0 # distance [mm] between phantom and image detector", 
+            "optionally stands can be identified by their detectorId:", 
+            "  \"detector_names\": \"SN1525UU;Tafel|SN152590;Wand\"", 
+            "optionally the source to detector distance can be set manually (with autodetection of table/wall stand)", 
+            "  \"tablesidmm\": 1150 # distance [mm] between source and image detector in table", 
+            "  \"wallsidmm\": 2000 # distance [mm] between source and image detector in wall", 
+            "or (to set forced usage of one distance e.g. for portable detectors):", 
+            "  \"sidmm\": 1150 # distance [mm] between source and image detector", 
+            "the following params can be supplied to override automatic determination:", 
+            "  \"use_pixmm\": 0.262 # the size of one pixel in mm (on the phantom)", 
+            "  \"use_mustbeinverted\": True # higher pixelvalues should mean less attenuation", 
+            "  \"use_mustbemirrored\": True # force mirroring of image before analysis", 
+            "optionally set the following parameters:", 
+            "  \"auto_suffix\": true or false [false]  # to set or suppress auto_suffix generation"
+        ], 
+        "version": "20180206"
+    }
+}

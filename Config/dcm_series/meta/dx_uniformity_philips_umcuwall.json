@@ -1,0 +1,115 @@
+{
+    "comments": {
+        "author": "Arnold Schilham, UMCU", 
+        "creator": "generate_config_json.py version 20180219", 
+        "description": "DX/Uniformity for Philips Digital Diagnost R3"
+    }, 
+    "results": {
+        "AcquisitionDateTime": {
+            "constraint_period": 14, 
+            "description": "date and time of acquisition", 
+            "display_level": 2, 
+            "display_name": "DateTime", 
+            "units": ""
+        }, 
+        "Artefacts": {
+            "constraint_minlowhighmax": [
+                0, 
+                0, 
+                5, 
+                10
+            ], 
+            "description": "number of isolated artefacts", 
+            "display_level": 2, 
+            "display_name": "Artefacts", 
+            "units": ""
+        }, 
+        "Date of Last Calibration": {
+            "description": "date of last calibration", 
+            "display_level": 2, 
+            "display_name": "CalibrationDate", 
+            "units": ""
+        }, 
+        "DistanceSourceToDetector (mm)": {
+            "constraint_minlowhighmax": [
+                1980, 
+                1990, 
+                2010, 
+                2020
+            ], 
+            "description": "distance between source and detector", 
+            "display_level": 2, 
+            "display_name": "SID", 
+            "units": "mm"
+        }, 
+        "FilterType": {
+            "constraint_equals": "0mmAl", 
+            "description": "tube filtration", 
+            "display_level": 2, 
+            "display_name": "Filtration", 
+            "units": ""
+        }, 
+        "FocalSpot(s)": {
+            "constraint_equals": "0.000", 
+            "description": "size of focal spot", 
+            "display_level": 2, 
+            "display_name": "FocalSpot", 
+            "units": ""
+        }, 
+        "Grid": {
+            "constraint_equals": "NONE", 
+            "description": "scatter grid position", 
+            "display_level": 2, 
+            "display_name": "Grid", 
+            "units": ""
+        }, 
+        "ImageAreaDoseProduct": {
+            "description": "dose area product", 
+            "display_level": 2, 
+            "display_name": "DAP", 
+            "units": "dGycm2"
+        }, 
+        "Operator's Name": {
+            "description": "name of operator", 
+            "display_level": 2, 
+            "display_name": "Operator", 
+            "units": ""
+        }, 
+        "Uniformity_(%)": {
+            "constraint_minlowhighmax": [
+                0, 
+                0, 
+                25, 
+                25
+            ], 
+            "description": "measure of non-uniformity", 
+            "display_level": 2, 
+            "display_name": "Uniformity", 
+            "units": "%"
+        }, 
+        "artefacts": {
+            "description": "overview of artefacts", 
+            "display_level": 2, 
+            "display_name": "artefacts", 
+            "units": ""
+        }, 
+        "kVp": {
+            "constraint_minlowhighmax": [
+                125, 
+                125, 
+                125, 
+                125
+            ], 
+            "description": "tube voltage", 
+            "display_level": 2, 
+            "display_name": "kVp", 
+            "units": "kV"
+        }, 
+        "uniformity": {
+            "description": "overview of uniformity", 
+            "display_level": 2, 
+            "display_name": "uniformity", 
+            "units": ""
+        }
+    }
+}

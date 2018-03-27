@@ -1,0 +1,88 @@
+{
+    "comments": {
+        "author": "Arnold Schilham, UMCU", 
+        "creator": "generate_config_json.py version 20180219", 
+        "description": "DX/Uniformity for Philips MultiDiagnost Eleva"
+    }, 
+    "results": {
+        "AcquisitionDateTime": {
+            "constraint_period": 14, 
+            "description": "date and time of acquisition", 
+            "display_level": 2, 
+            "display_name": "DateTime", 
+            "units": ""
+        }, 
+        "Artefacts": {
+            "constraint_minlowhighmax": [
+                0, 
+                0, 
+                5, 
+                10
+            ], 
+            "description": "number of isolated artefacts", 
+            "display_level": 2, 
+            "display_name": "Artefacts", 
+            "units": ""
+        }, 
+        "DistanceSourceToDetector (mm)": {
+            "constraint_minlowhighmax": [
+                118, 
+                119, 
+                121, 
+                122
+            ], 
+            "description": "distance between source and detector", 
+            "display_level": 2, 
+            "display_name": "SID", 
+            "units": "cm"
+        }, 
+        "ImageAreaDoseProduct": {
+            "constraint_minlowhighmax": [
+                0.79, 
+                0.8, 
+                0.96, 
+                0.97
+            ], 
+            "description": "dose area product", 
+            "display_level": 2, 
+            "display_name": "DAP", 
+            "units": "dGycm2"
+        }, 
+        "Uniformity_(%)": {
+            "constraint_minlowhighmax": [
+                0, 
+                0, 
+                9, 
+                10
+            ], 
+            "description": "measure of non-uniformity", 
+            "display_level": 2, 
+            "display_name": "Uniformity", 
+            "units": "%"
+        }, 
+        "artefacts": {
+            "description": "overview of artefacts", 
+            "display_level": 2, 
+            "display_name": "artefacts", 
+            "units": ""
+        }, 
+        "kVp": {
+            "constraint_minlowhighmax": [
+                80.0, 
+                80.0, 
+                80.0, 
+                80.0
+            ], 
+            "description": "tube voltage", 
+            "display_level": 2, 
+            "display_name": "kVp", 
+            "units": "kV"
+        }, 
+        "uniformity": {
+            "description": "overview of uniformity", 
+            "display_level": 2, 
+            "display_name": "uniformity", 
+            "units": ""
+        }
+    }
+}

@@ -1,0 +1,113 @@
+{
+    "comments": {
+        "author": "Arnold Schilham, UMCU", 
+        "creator": "generate_config_json.py version 20180219", 
+        "description": "DX/Uniformity for Carestream DRX-Revolution with large detector"
+    }, 
+    "results": {
+        "AcquisitionDateTime": {
+            "constraint_period": 14, 
+            "description": "date and time of acquisition", 
+            "display_level": 2, 
+            "display_name": "DateTime", 
+            "units": ""
+        }, 
+        "Artefacts": {
+            "constraint_minlowhighmax": [
+                0, 
+                0, 
+                5, 
+                5
+            ], 
+            "description": "number of isolated artefacts", 
+            "display_level": 2, 
+            "display_name": "Artefacts", 
+            "units": ""
+        }, 
+        "DeviceSerialNumber": {
+            "description": "serial number of device", 
+            "display_level": 1, 
+            "display_name": "DeviceSerialNumber", 
+            "units": ""
+        }, 
+        "Exposure (uAs)": {
+            "description": "tube load", 
+            "display_level": 2, 
+            "display_name": "uAs", 
+            "units": "uAs"
+        }, 
+        "Focal Spot(s)": {
+            "constraint_equals": "0.6", 
+            "description": "size of focal spot", 
+            "display_level": 2, 
+            "display_name": "FocalSpot", 
+            "units": ""
+        }, 
+        "ImageAreaDoseProduct": {
+            "description": "dose area product", 
+            "display_level": 2, 
+            "display_name": "DAP", 
+            "units": "dGycm2"
+        }, 
+        "Operator's Name": {
+            "description": "name of operator", 
+            "display_level": 2, 
+            "display_name": "Operator", 
+            "units": ""
+        }, 
+        "RelativeXRayExposure": {
+            "description": "x-ray exposure relative to target exposure", 
+            "display_level": 2, 
+            "display_name": "RelativeXRayExposure", 
+            "units": ""
+        }, 
+        "Sensitivity": {
+            "description": "sensitivity", 
+            "display_level": 2, 
+            "display_name": "Sensitivity", 
+            "units": ""
+        }, 
+        "SoftwareVersions": {
+            "description": "software version of device", 
+            "display_level": 1, 
+            "display_name": "SoftwareVersions", 
+            "units": ""
+        }, 
+        "Uniformity_(%)": {
+            "constraint_minlowhighmax": [
+                0, 
+                0, 
+                25, 
+                25
+            ], 
+            "description": "measure of non-uniformity", 
+            "display_level": 2, 
+            "display_name": "Uniformity", 
+            "units": "%"
+        }, 
+        "artefacts": {
+            "description": "overview of artefacts", 
+            "display_level": 2, 
+            "display_name": "artefacts", 
+            "units": ""
+        }, 
+        "kVp": {
+            "constraint_minlowhighmax": [
+                90.0, 
+                90.0, 
+                90.0, 
+                90.0
+            ], 
+            "description": "tube voltage", 
+            "display_level": 2, 
+            "display_name": "kVp", 
+            "units": "kV"
+        }, 
+        "uniformity": {
+            "description": "overview of uniformity", 
+            "display_level": 2, 
+            "display_name": "uniformity", 
+            "units": ""
+        }
+    }
+}
