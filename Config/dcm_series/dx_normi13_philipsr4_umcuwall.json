@@ -8,38 +8,32 @@
             "filters": {}, 
             "params": {
                 "auto_suffix": false, 
-                "roomname": "DRXSMALL"
+                "roomname": "AZU"
             }
         }, 
         "qc_series": {
             "filters": {}, 
             "params": {
                 "auto_suffix": false, 
-                "linepair_type": "typ38", 
-                "pidmm": 0, 
-                "roomname": "DRXSMALL", 
-                "sidmm": 1250, 
-                "xymm0.6": "-108.5;3.8", 
-                "xymm1.4": "-87.9;24.2", 
-                "xymm1.8": "-81.3;-27.3", 
-                "xymm4.6": "-56.2;-2.2"
+                "linepair_type": "RXT02", 
+                "pidmm": 84, 
+                "roomname": "AZU", 
+                "xymm0.6": "-83.0;-25.0", 
+                "xymm1.0": "-99.0;-8.0"
             }
         }
     }, 
     "comments": {
         "author": "Arnold Schilham, UMCU", 
         "creator": "generate_config_json.py version 20180219", 
-        "description": "DX/Normi13 for Carestream DRX-Revolution", 
+        "description": "DX/Normi13 for Philips Digital Diagnost R4", 
         "params": {
             "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
             "linepair_type": "must be RXT02 or typ38", 
             "pidmm": "distance between phantom and image detector", 
             "roomname": "your identifier of this room", 
-            "sidmm": "distance between source and image detector", 
             "xymm0.6": "position of the dot in 0.6", 
-            "xymm1.4": "position of the dot in 1.4", 
-            "xymm1.8": "position of the dot in 1.8", 
-            "xymm4.6": "position of the dot in 4.6"
+            "xymm1.0": "position of the dot in 1.0"
         }, 
         "usage": [
             "params that must be set for both actions below:", 
@@ -74,6 +68,6 @@
             "optionally set the following parameters:", 
             "  \"auto_suffix\": true or false [false]  # to set or suppress auto_suffix generation"
         ], 
-        "version": "20180418"
+        "version": "20180417"
     }
 }
