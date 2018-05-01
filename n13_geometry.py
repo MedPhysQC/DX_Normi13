@@ -136,6 +136,7 @@ def FixPhantomOrientation(cs):
     heightpx = np.shape(cs.pixeldataIn)[1]
 
     still_in_edge = True
+    max_frac = 0.6
     while still_in_edge:
         seppx += int(cs.phantommm2pix(10))# 2 cm away from edges
         smallimage = cs.pixeldataIn[seppx:widthpx-seppx:3,seppx:heightpx-seppx:3] #every third pixel
@@ -150,13 +151,13 @@ def FixPhantomOrientation(cs):
         imwid2 = int(imwid/2)
         thresmax = minim+.05*(maxim-minim) # 5% higher than minimum
         # make sure the outside of the phantom is not included
-        if np.sum(smallimage[  0:imwid2,  0        ]<thresmax) > .66*imwid2:
+        if np.sum(smallimage[  0:imwid,  0        ]<thresmax) > max_frac*imwid:
             continue
-        if np.sum(smallimage[  0:imwid2, -1        ]<thresmax) > .66*imwid2:
+        if np.sum(smallimage[  0:imwid, -1        ]<thresmax) > max_frac*imwid:
             continue
-        if np.sum(smallimage[  0,        0:imhei2 ]<thresmax) > .66*imhei2:
+        if np.sum(smallimage[  0,        0:imhei ]<thresmax) > max_frac*imhei:
             continue
-        if np.sum(smallimage[ -1,        0:imhei2 ]<thresmax) > .66*imhei2:
+        if np.sum(smallimage[ -1,        0:imhei ]<thresmax) > max_frac*imhei:
             continue
         still_in_edge = False
 

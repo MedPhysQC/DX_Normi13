@@ -19,6 +19,7 @@ Note: comparison will be against lit.stTable, if not matched (eg. overwritten by
 
 TODO:
 Changelog:
+    20180501: Detect infinite loop in CuWedge
     20180205: fix in n13_geometry to allow finding droplines at two heights; added extra param mustbeprecropped to room  
     20180124: fix in uniformity where border px was ignored if cropping detected
     20171116: fix scipy version 1.0
@@ -45,7 +46,7 @@ Changelog:
     20160202: added uniformity
     20151109: start of new module, based on QCXRay_lib of Bucky_PEHAMED_Wellhofer of 20151029
 """
-__version__ = '20180205'
+__version__ = '20180501'
 __author__ = 'aschilham'
 
 try:
