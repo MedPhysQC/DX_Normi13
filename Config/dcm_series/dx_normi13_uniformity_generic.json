@@ -26,6 +26,7 @@
                 "pidmm": 70, 
                 "roomname": "Generic", 
                 "sidmm": 1000, 
+                "skip_cropping": true, 
                 "tablepidmm": 70, 
                 "use_mustbeinverted": false, 
                 "use_mustbemirrored": false, 
@@ -42,12 +43,14 @@
         "uniformity_series": {
             "filters": {}, 
             "params": {
+                "artefactborder_is_circle": true, 
                 "artefactborderpx": "35;35;35;35", 
                 "auto_suffix": true, 
                 "detector_names": "SN152495;Tafel|SN152508;Wand", 
                 "pidmm": 70, 
                 "roomname": "Generic", 
                 "sidmm": 1000, 
+                "skip_cropping": true, 
                 "tablepidmm": 70, 
                 "use_mustbeinverted": false, 
                 "use_mustbemirrored": false, 
@@ -62,6 +65,7 @@
         "creator": "generate_config_json.py version 20180219", 
         "description": "DX/Normi13 for Generic", 
         "params": {
+            "artefactborder_is_circle": "interpret artefactborderpx as circle.", 
             "artefactborderpx": "number of pixels to skip on each side (xmin, xmax, ymin, ymax)", 
             "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
             "detector_names": "translation of serial numbers into your identifiers", 
@@ -70,6 +74,7 @@
             "pidmm": "distance between phantom and image detector (both table and wall)", 
             "roomname": "your identifier of this room", 
             "sidmm": "distance between source and image detector (both table and wall)", 
+            "skip_cropping": "do not attempt to crop image.", 
             "tablepidmm": "distance between phantom on table top and image detector", 
             "use_mustbeinverted": "override determination if inversion of pixel values is needed.", 
             "use_mustbemirrored": "force mirroring of image before analysis.", 
@@ -112,6 +117,9 @@
             "the following params can be supplied to override automatic determination:", 
             "  \"use_pixmm\": 0.262 # the size of one pixel in mm (on the phantom)", 
             "  \"use_mustbeinverted\": True # higher pixelvalues should mean less attenuation", 
+            "the following params can be supplied to override auto cropping of image before analysis:", 
+            "  \"skip_cropping\": True # do not attempt to crop", 
+            "  \"artefactborder_is_circle\": True # the artefactborder is a circle", 
             "optionally set the following parameters:", 
             "  \"auto_suffix\": true or false [false]  # to set or suppress auto_suffix generation"
         ], 

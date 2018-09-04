@@ -100,6 +100,9 @@ def CropPhantom(cs):
     widthpx, heightpx = np.shape(cs.pixeldataIn)
     cs.geom.orig_shape = [widthpx, heightpx]
 
+    if cs.forceRoom.skip_cropping:
+        return error
+
     if qc_unif.NeedsCropping2(cs_unif, mode='normi13'):
         print('*** Needs Cropping ***')        
         bpx = 0#self.phantommm2pix(cs,10)

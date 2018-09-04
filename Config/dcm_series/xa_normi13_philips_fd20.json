@@ -73,6 +73,9 @@
             "the following params can be supplied to override automatic determination:", 
             "  \"use_pixmm\": 0.262 # the size of one pixel in mm (on the phantom)", 
             "  \"use_mustbeinverted\": True # higher pixelvalues should mean less attenuation", 
+            "the following params can be supplied to override auto cropping of image before analysis:", 
+            "  \"skip_cropping\": True # do not attempt to crop", 
+            "  \"artefactborder_is_circle\": True # the artefactborder is a circle", 
             "optionally set the following parameters:", 
             "  \"auto_suffix\": true or false [false]  # to set or suppress auto_suffix generation"
         ], 

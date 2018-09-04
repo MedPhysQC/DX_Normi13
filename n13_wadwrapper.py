@@ -20,6 +20,7 @@
 #
 #
 # Changelog:
+#   20180904: suuport for RF circular FOV: skip_cropping, artefactborder_is_circle
 #   20180205: removing unused parameters
 #   20180205: increased attempts to find box in phantom; added precrop
 #   20180124: increased number of retries in BBAlign for robustness
@@ -36,7 +37,7 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20180206'
+__version__ = '20180904'
 __author__ = 'aschilham'
 
 import os
@@ -118,6 +119,15 @@ def override_settings(room, params):
         pass
     try:
         room.mustbeprecropped = [ int(v) for v in str(params['use_mustbeprecropped']).strip().split(';') ]
+    except:
+        pass
+
+    try:
+        room.skip_cropping = (str(params['skip_cropping']).lower() == 'true') 
+    except:
+        pass
+    try:
+        room.artefactborder_is_circle = (str(params['artefactborder_is_circle']).lower() == 'true') 
     except:
         pass
 

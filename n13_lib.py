@@ -93,6 +93,7 @@ class Room:
 
         # xray field edge detection
         self.outvalue = outvalue # value of pixels outside x-ray field
+        self.skip_cropping = False # For images with a circular FOV, this should be set to True
 
         # hard overrides for use_ params
         self.pixmm = None          # allow hard override of pixmm, for example is ImagerPixelSpacing does not exist
@@ -112,7 +113,7 @@ class Room:
 
         # uniformity
         self.artefactborderpx = artefactborderpx
-
+        self.artefactborder_is_circle = False # No, the artefactborder is not circular
         # MTF
         if len(linepairmarkers)>0:
             self.linepairmodel = linepairmarkers['type']
@@ -869,7 +870,7 @@ class XRayQC:
         
         qc_unif = unif_lib.Uniformity_QC()
 
-        if qc_unif.NeedsCroppingUnif(cs):
+        if not cs.forceRoom.skip_cropping and qc_unif.NeedsCroppingUnif(cs):
             # note: no cropping will occur, just the uniformity analysis will be restricted to crop_unif. rois are wrt original
             qc_unif.RestrictROIUniformity(cs.unif)
         else:
@@ -890,13 +891,14 @@ class XRayQC:
         else:
             qc_unif.artefactDetectorParameters(UseStructure=False, bkscale=25, fgscale=5.0, threshold=15)
 
-        error = qc_unif.Uniformity(cs.unif, cs.forceRoom.artefactborderpx) # DOES NOT HAVE TO BE THE SAME BORDERPIX
+        error = qc_unif.Uniformity(cs.unif, cs.forceRoom.artefactborderpx, cs.forceRoom.artefactborder_is_circle) # DOES NOT HAVE TO BE THE SAME BORDERPIX
 
         if error:
             return error,'error in uniformity'
 
         # here a little bit of cropping, but only for the cs.artefact_image. artefacts are wrt cropped cs.artefact_image
-        error = qc_unif.Artefacts(cs.unif, cs.forceRoom.artefactborderpx)
+        error = qc_unif.Artefacts(cs.unif, borderpx=cs.forceRoom.artefactborderpx, 
+                                  border_is_circle=cs.forceRoom.artefactborder_is_circle)
         if error:
             return error,'error in artefacts'
 
@@ -909,7 +911,11 @@ class XRayQC:
         error = True
         msg = ''
 
-        print('[QCUnif]',cs.dcmInfile.SeriesDescription)
+        label = cs.dcmInfile.get('SeriesDescription', None)
+        if label is None:
+            label = cs.dcmInfile.get('BodyPartExamined', None)
+            
+        print('[QCUnif]', label)
         error, msg = self.Uniformity(cs)
 
         if error:

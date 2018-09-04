@@ -52,7 +52,9 @@
             "  \"use_mustbeinverted\": True # higher pixelvalues should mean less attenuation", 
             "  \"use_mustbemirrored\": True # force mirroring of image before analysis", 
             "optionally set the following parameters:", 
-            "  \"auto_suffix\": true or false [false]  # to set or suppress auto_suffix generation"
+            "  \"auto_suffix\": true or false [false]  # to set or suppress auto_suffix generation", 
+            "optionally set the following parameters:", 
+            "  \"artefactborderpx\": l;r;t;b [35;35;35;35]  # number of pixels to skip on each side (xmin, xmax, ymin, ymax)"
         ], 
         "version": "20180206"
     }
