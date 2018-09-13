@@ -22,15 +22,11 @@
             }
         }
     }, 
+    "cfgformat": "20180910", 
     "comments": {
         "author": "Arnold Schilham, UMCU", 
-        "creator": "generate_config_json.py version 20180219", 
+        "creator": "generate_config_json.py version 20180912", 
         "description": "DX/Uniformity for Philips Digital Diagnost R4", 
-        "params": {
-            "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
-            "pidmm": "distance between phantom and image detector", 
-            "roomname": "your identifier of this room"
-        }, 
         "usage": [
             "params that must be set for both actions below:", 
             "  \"roomname\": \"Bucky1\" # any identifier", 
@@ -55,5 +51,23 @@
             "  \"artefactborderpx\": l;r;t;b [35;35;35;35]  # number of pixels to skip on each side (xmin, xmax, ymin, ymax)"
         ], 
         "version": "20180417"
+    }, 
+    "info": {
+        "acqdatetime": {
+            "params": {}
+        }, 
+        "header_series": {
+            "params": {
+                "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
+                "roomname": "your identifier of this room"
+            }
+        }, 
+        "uniformity_series": {
+            "params": {
+                "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
+                "pidmm": "distance between phantom and image detector", 
+                "roomname": "your identifier of this room"
+            }
+        }
     }
 }

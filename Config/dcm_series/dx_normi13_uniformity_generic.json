@@ -60,33 +60,11 @@
             }
         }
     }, 
+    "cfgformat": "20180910", 
     "comments": {
         "author": "Arnold Schilham, UMCU", 
-        "creator": "generate_config_json.py version 20180219", 
+        "creator": "generate_config_json.py version 20180912", 
         "description": "DX/Normi13 for Generic", 
-        "params": {
-            "artefactborder_is_circle": "interpret artefactborderpx as circle.", 
-            "artefactborderpx": "number of pixels to skip on each side (xmin, xmax, ymin, ymax)", 
-            "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
-            "detector_names": "translation of serial numbers into your identifiers", 
-            "linepair_type": "must be RXT02 or typ38", 
-            "outvalue": "value of pixels outside xray field", 
-            "pidmm": "distance between phantom and image detector (both table and wall)", 
-            "roomname": "your identifier of this room", 
-            "sidmm": "distance between source and image detector (both table and wall)", 
-            "skip_cropping": "do not attempt to crop image.", 
-            "tablepidmm": "distance between phantom on table top and image detector", 
-            "use_mustbeinverted": "override determination if inversion of pixel values is needed.", 
-            "use_mustbemirrored": "force mirroring of image before analysis.", 
-            "use_mustbeprecropped": "use cropping to xmin_px;xmax_px;ymin_px;ymax_px before processing", 
-            "use_pixmm": "override determination of pixel size in mm (on phantom)", 
-            "wallpidmm": "distance between phantom on wall stand and image detector", 
-            "xymm0.6": "position of the dot in 0.6 (in RXT02 or typ38)", 
-            "xymm1.0": "position of the dot in 1.0 (in RXT02)", 
-            "xymm1.4": "position of the dot in 1.4 (in typ38)", 
-            "xymm1.8": "position of the dot in 1.8 (in typ38)", 
-            "xymm4.6": "position of the dot in 4.6 (in typ38)"
-        }, 
         "usage": [
             "params that must be set for both actions below:", 
             "  \"roomname\": \"Bucky1\" # any identifier", 
@@ -124,5 +102,62 @@
             "  \"auto_suffix\": true or false [false]  # to set or suppress auto_suffix generation"
         ], 
         "version": "20180206"
+    }, 
+    "info": {
+        "acqdatetime": {
+            "params": {}
+        }, 
+        "header_series": {
+            "params": {
+                "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
+                "detector_names": "translation of serial numbers into your identifiers", 
+                "pidmm": "distance between phantom and image detector (both table and wall)", 
+                "roomname": "your identifier of this room", 
+                "sidmm": "distance between source and image detector (both table and wall)", 
+                "tablepidmm": "distance between phantom on table top and image detector", 
+                "wallpidmm": "distance between phantom on wall stand and image detector"
+            }
+        }, 
+        "qc_series": {
+            "params": {
+                "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
+                "detector_names": "translation of serial numbers into your identifiers", 
+                "linepair_type": "must be RXT02 or typ38", 
+                "outvalue": "value of pixels outside xray field", 
+                "pidmm": "distance between phantom and image detector (both table and wall)", 
+                "roomname": "your identifier of this room", 
+                "sidmm": "distance between source and image detector (both table and wall)", 
+                "skip_cropping": "do not attempt to crop image.", 
+                "tablepidmm": "distance between phantom on table top and image detector", 
+                "use_mustbeinverted": "override determination if inversion of pixel values is needed.", 
+                "use_mustbemirrored": "force mirroring of image before analysis.", 
+                "use_mustbeprecropped": "use cropping to xmin_px;xmax_px;ymin_px;ymax_px before processing", 
+                "use_pixmm": "override determination of pixel size in mm (on phantom)", 
+                "wallpidmm": "distance between phantom on wall stand and image detector", 
+                "xymm0.6": "position of the dot in 0.6 (in RXT02 or typ38)", 
+                "xymm1.0": "position of the dot in 1.0 (in RXT02)", 
+                "xymm1.4": "position of the dot in 1.4 (in typ38)", 
+                "xymm1.8": "position of the dot in 1.8 (in typ38)", 
+                "xymm4.6": "position of the dot in 4.6 (in typ38)"
+            }
+        }, 
+        "uniformity_series": {
+            "params": {
+                "artefactborder_is_circle": "interpret artefactborderpx as circle.", 
+                "artefactborderpx": "number of pixels to skip on each side (xmin, xmax, ymin, ymax)", 
+                "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
+                "detector_names": "translation of serial numbers into your identifiers", 
+                "pidmm": "distance between phantom and image detector (both table and wall)", 
+                "roomname": "your identifier of this room", 
+                "sidmm": "distance between source and image detector (both table and wall)", 
+                "skip_cropping": "do not attempt to crop image.", 
+                "tablepidmm": "distance between phantom on table top and image detector", 
+                "use_mustbeinverted": "override determination if inversion of pixel values is needed.", 
+                "use_mustbemirrored": "force mirroring of image before analysis.", 
+                "use_mustbeprecropped": "use cropping to xmin_px;xmax_px;ymin_px;ymax_px before processing", 
+                "use_pixmm": "override determination of pixel size in mm (on phantom)", 
+                "wallpidmm": "distance between phantom on wall stand and image detector"
+            }
+        }
     }
 }

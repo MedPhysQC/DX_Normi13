@@ -26,21 +26,11 @@
             }
         }
     }, 
+    "cfgformat": "20180910", 
     "comments": {
         "author": "Arnold Schilham, UMCU", 
-        "creator": "generate_config_json.py version 20180219", 
+        "creator": "generate_config_json.py version 20180912", 
         "description": "DX/Normi13 for Carestream DRX-Revolution", 
-        "params": {
-            "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
-            "linepair_type": "must be RXT02 or typ38", 
-            "pidmm": "distance between phantom and image detector", 
-            "roomname": "your identifier of this room", 
-            "sidmm": "distance between source and image detector", 
-            "xymm0.6": "position of the dot in 0.6", 
-            "xymm1.4": "position of the dot in 1.4", 
-            "xymm1.8": "position of the dot in 1.8", 
-            "xymm4.6": "position of the dot in 4.6"
-        }, 
         "usage": [
             "params that must be set for both actions below:", 
             "  \"roomname\": \"Bucky1\" # any identifier", 
@@ -78,5 +68,29 @@
             "  \"auto_suffix\": true or false [false]  # to set or suppress auto_suffix generation"
         ], 
         "version": "20180418"
+    }, 
+    "info": {
+        "acqdatetime": {
+            "params": {}
+        }, 
+        "header_series": {
+            "params": {
+                "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
+                "roomname": "your identifier of this room"
+            }
+        }, 
+        "qc_series": {
+            "params": {
+                "auto_suffix": "add suffix based on detector name or table/wall distinction to results", 
+                "linepair_type": "must be RXT02 or typ38", 
+                "pidmm": "distance between phantom and image detector", 
+                "roomname": "your identifier of this room", 
+                "sidmm": "distance between source and image detector", 
+                "xymm0.6": "position of the dot in 0.6", 
+                "xymm1.4": "position of the dot in 1.4", 
+                "xymm1.8": "position of the dot in 1.8", 
+                "xymm4.6": "position of the dot in 4.6"
+            }
+        }
     }
 }
