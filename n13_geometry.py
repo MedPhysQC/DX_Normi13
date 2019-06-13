@@ -130,7 +130,18 @@ def FixPhantomOrientation(cs):
     3. Use location wrt center to find and undo 90 degree rotations
     """
     error = False
+    if not getattr(cs.forceRoom, 'use_phantomrotation', None) is None:
+        box_orientation = 0
+        ang = int(cs.forceRoom.use_phantomrotation/90+1e-5)
+        if ang>0: # fix orientation
+            cs.pixeldataIn = np.rot90(cs.pixeldataIn,-ang)
+            box_orientation = 90*ang
 
+        cs.geom.box_orientation = box_orientation
+    
+        print('Using fixed phantom orientation: ',cs.geom.box_orientation)
+        return error
+        
     # 2. Make box at x-5cm and calculate avg
     seppx = int(cs.phantommm2pix(20))# 2 cm away from edges
     seppx = int(cs.phantommm2pix(10))# 2 cm away from edges

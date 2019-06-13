@@ -20,8 +20,9 @@
 # 
 #
 # Changelog:
+#   20190611: Added use_phantomrotation to skip autodetect phantom rotation
 #   20190426: Fix for matplotlib>3
-#   20180904: suuport for RF circular FOV: skip_cropping, artefactborder_is_circle
+#   20180904: support for RF circular FOV: skip_cropping, artefactborder_is_circle
 #   20180205: removing unused parameters
 #   20180205: increased attempts to find box in phantom; added precrop
 #   20180124: increased number of retries in BBAlign for robustness
@@ -38,7 +39,7 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20190426'
+__version__ = '20190611'
 __author__ = 'aschilham'
 
 import os
@@ -131,6 +132,10 @@ def override_settings(room, params):
     except:
         pass
 
+    try:
+        room.use_phantomrotation = int(str(params['use_phantomrotation']))
+    except:
+        pass
     try:
         room.skip_cropping = (str(params['skip_cropping']).lower() == 'true') 
     except:
