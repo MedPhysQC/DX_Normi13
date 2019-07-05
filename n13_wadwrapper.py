@@ -20,7 +20,7 @@
 # 
 #
 # Changelog:
-#   20190705: Remove double entry RelativeXRayExposure and add to floats: ExposureTime, ExposureIndex, DeviationIndex
+#   20190705: Remove double entry RelativeXRayExposure and add to floats: ExposureTime, ExposureIndex, DeviationIndex,TargetExposureIndex
 #   20190611: Added use_phantomrotation to skip autodetect phantom rotation
 #   20190426: Fix for matplotlib>3
 #   20180904: support for RF circular FOV: skip_cropping, artefactborder_is_circle
@@ -476,6 +476,7 @@ def header_series(data, results, action):
         'ExposureTime',
         'ExposureIndex',
         'DeviationIndex',
+        'TargetExposureIndex'
         
     ]
     offset = -26
