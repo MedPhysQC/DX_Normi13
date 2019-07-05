@@ -19,6 +19,7 @@ Note: comparison will be against lit.stTable, if not matched (eg. overwritten by
 
 TODO:
 Changelog:
+    20190705: Remove double RelativeXRayExposure entry
     20190611: Added use_phantomrotation to skip autodetect phantom rotation
     20180501: Detect infinite loop in CuWedge
     20180205: fix in n13_geometry to allow finding droplines at two heights; added extra param mustbeprecropped to room  
@@ -47,7 +48,7 @@ Changelog:
     20160202: added uniformity
     20151109: start of new module, based on QCXRay_lib of Bucky_PEHAMED_Wellhofer of 20151029
 """
-__version__ = '20190611'
+__version__ = '20190705'
 __author__ = 'aschilham'
 
 try:
@@ -682,8 +683,6 @@ class XRayQC:
             {'key':"0018,700A",  'name':"DetectorID"},
             {'key':"0018,700C",  'name':"DateCalibration"},
             {'key':"0018,1200",  'name':"Date of Last Calibration"},
-
-            {'key':"0018,1405",  'name':"RelativeXRayExposure"},
             {'key':"0018,1411",  'name':"ExposureIndex"},
             {'key':"0018,1412",  'name':"TargetExposureIndex"},
             {'key':"0018,1413",  'name':"DeviationIndex"},

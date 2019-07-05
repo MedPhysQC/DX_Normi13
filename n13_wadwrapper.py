@@ -20,6 +20,7 @@
 # 
 #
 # Changelog:
+#   20190705: Remove double entry RelativeXRayExposure and add to floats: ExposureTime, ExposureIndex, DeviationIndex
 #   20190611: Added use_phantomrotation to skip autodetect phantom rotation
 #   20190426: Fix for matplotlib>3
 #   20180904: support for RF circular FOV: skip_cropping, artefactborder_is_circle
@@ -39,7 +40,7 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20190611'
+__version__ = '20190705'
 __author__ = 'aschilham'
 
 import os
@@ -471,7 +472,11 @@ def header_series(data, results, action):
         'CollimatorUp',
         'CollimatorDown',
         'EntranceDose_mGy',
-        'RelativeXRayExposure'
+        'RelativeXRayExposure',
+        'ExposureTime',
+        'ExposureIndex',
+        'DeviationIndex',
+        
     ]
     offset = -26
     varname = 'pluginversion'+idname
