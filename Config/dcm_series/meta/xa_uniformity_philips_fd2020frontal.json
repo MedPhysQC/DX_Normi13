@@ -1,28 +1,28 @@
 {
     "comments": {
-        "author": "Arnold Schilham, UMCU", 
-        "creator": "generate_config_json.py version 20180912", 
+        "author": "Arnold Schilham, UMCU",
+        "creator": "generate_config_json.py version 20180912",
         "description": "DX/Uniformity for Philips AlluraXper FD2020 Frontal"
-    }, 
-    "metaformat": "20180910", 
+    },
+    "metaformat": "20180910",
     "results": {
         "AcquisitionDateTime": {
-            "constraint_period": 14, 
-            "description": "date and time of acquisition", 
-            "display_level": 2, 
-            "display_name": "DateTime", 
+            "constraint_period": 14,
+            "description": "date and time of acquisition",
+            "display_level": 2,
+            "display_name": "DateTime",
             "units": ""
-        }, 
+        },
         "artefacts": {
-            "description": "overview of artefacts", 
-            "display_level": 2, 
-            "display_name": "artefacts", 
+            "description": "overview of artefacts",
+            "display_level": 2,
+            "display_name": "artefacts",
             "units": ""
-        }, 
+        },
         "uniformity": {
-            "description": "overview of uniformity", 
-            "display_level": 2, 
-            "display_name": "uniformity", 
+            "description": "overview of uniformity",
+            "display_level": 2,
+            "display_name": "uniformity",
             "units": ""
         }
     }

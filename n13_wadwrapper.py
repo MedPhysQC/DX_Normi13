@@ -20,6 +20,7 @@
 # 
 #
 # Changelog:
+#   20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
 #   20190705: Remove double entry RelativeXRayExposure and add to floats: ExposureTime, ExposureIndex, DeviationIndex,TargetExposureIndex
 #   20190611: Added use_phantomrotation to skip autodetect phantom rotation
 #   20190426: Fix for matplotlib>3
@@ -40,7 +41,7 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20190705'
+__version__ = '20200508'
 __author__ = 'aschilham'
 
 import os

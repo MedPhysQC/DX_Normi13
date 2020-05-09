@@ -1,230 +1,230 @@
 {
     "comments": {
-        "author": "Arnold Schilham, UMCU", 
-        "creator": "generate_config_json.py version 20180912", 
+        "author": "Arnold Schilham, UMCU",
+        "creator": "generate_config_json.py version 20180912",
         "description": "DX/Normi13 for Philips Digital Diagnost R4"
-    }, 
-    "metaformat": "20180910", 
+    },
+    "metaformat": "20180910",
     "results": {
         "AcquisitionDateTime": {
-            "constraint_period": 14, 
-            "description": "date and time of acquisition", 
-            "display_level": 2, 
-            "display_name": "DateTime", 
+            "constraint_period": 14,
+            "description": "date and time of acquisition",
+            "display_level": 2,
+            "display_name": "DateTime",
             "units": ""
-        }, 
+        },
         "CollimatorDown": {
-            "description": "position of down collimator", 
-            "display_level": 1, 
-            "display_name": "CollimatorDown", 
+            "description": "position of down collimator",
+            "display_level": 1,
+            "display_name": "CollimatorDown",
             "units": ""
-        }, 
+        },
         "CollimatorLeft": {
-            "description": "position of left collimator", 
-            "display_level": 1, 
-            "display_name": "CollimatorLeft", 
+            "description": "position of left collimator",
+            "display_level": 1,
+            "display_name": "CollimatorLeft",
             "units": ""
-        }, 
+        },
         "CollimatorRight": {
-            "description": "position of right collimator", 
-            "display_level": 1, 
-            "display_name": "CollimatorRight", 
+            "description": "position of right collimator",
+            "display_level": 1,
+            "display_name": "CollimatorRight",
             "units": ""
-        }, 
+        },
         "CollimatorUp": {
-            "description": "position of up collimator", 
-            "display_level": 1, 
-            "display_name": "CollimatorUp", 
+            "description": "position of up collimator",
+            "display_level": 1,
+            "display_name": "CollimatorUp",
             "units": ""
-        }, 
+        },
         "CuDR2.3_0.0": {
             "constraint_minlowhighmax": [
-                5.0, 
-                5.0, 
-                10.0, 
+                5.0,
+                5.0,
+                10.0,
                 10.0
-            ], 
-            "description": "dynamic range over Cu wedge", 
-            "display_level": 2, 
-            "display_name": "DynamicRange", 
+            ],
+            "description": "dynamic range over Cu wedge",
+            "display_level": 2,
+            "display_name": "DynamicRange",
             "units": ""
-        }, 
+        },
         "CuSNR_0.0": {
-            "description": "signal to noise ratio in Cu wedge thickness 0.0mm", 
-            "display_level": 2, 
-            "display_name": "SNR", 
+            "description": "signal to noise ratio in Cu wedge thickness 0.0mm",
+            "display_level": 2,
+            "display_name": "SNR",
             "units": ""
-        }, 
+        },
         "Date of Last Calibration": {
-            "description": "date of last calibration", 
-            "display_level": 2, 
-            "display_name": "CalibrationDate", 
+            "description": "date of last calibration",
+            "display_level": 2,
+            "display_name": "CalibrationDate",
             "units": ""
-        }, 
+        },
         "DistanceSourceToDetector (mm)": {
             "constraint_minlowhighmax": [
-                1130, 
-                1140, 
-                1160, 
+                1130,
+                1140,
+                1160,
                 1170
-            ], 
-            "description": "distance between source and detector", 
-            "display_level": 2, 
-            "display_name": "SID", 
+            ],
+            "description": "distance between source and detector",
+            "display_level": 2,
+            "display_name": "SID",
             "units": "mm"
-        }, 
+        },
         "EntranceDose_mGy": {
-            "description": "entrance dose", 
-            "display_level": 2, 
-            "display_name": "EntranceDose", 
+            "description": "entrance dose",
+            "display_level": 2,
+            "display_name": "EntranceDose",
             "units": "mGy"
-        }, 
+        },
         "Exposure (uAs)": {
-            "description": "tube load", 
-            "display_level": 2, 
-            "display_name": "uAs", 
+            "description": "tube load",
+            "display_level": 2,
+            "display_name": "uAs",
             "units": "uAs"
-        }, 
+        },
         "ExposureTime (us)": {
-            "description": "duration of exposure", 
-            "display_level": 2, 
-            "display_name": "us", 
+            "description": "duration of exposure",
+            "display_level": 2,
+            "display_name": "us",
             "units": "us"
-        }, 
+        },
         "FilterMaterial": {
-            "constraint_equals": "ALUMINIUM", 
-            "description": "tube filtration", 
-            "display_level": 2, 
-            "display_name": "Filtration", 
+            "constraint_equals": "ALUMINIUM",
+            "description": "tube filtration",
+            "display_level": 2,
+            "display_name": "Filtration",
             "units": ""
-        }, 
+        },
         "FocalSpot": {
-            "constraint_equals": "SMALL", 
-            "description": "size of focal spot", 
-            "display_level": 2, 
-            "display_name": "FocalSpot", 
+            "constraint_equals": "SMALL",
+            "description": "size of focal spot",
+            "display_level": 2,
+            "display_name": "FocalSpot",
             "units": ""
-        }, 
+        },
         "Grid": {
-            "constraint_equals": "IN", 
-            "description": "scatter grid position", 
-            "display_level": 2, 
-            "display_name": "Grid", 
+            "constraint_equals": "IN",
+            "description": "scatter grid position",
+            "display_level": 2,
+            "display_name": "Grid",
             "units": ""
-        }, 
+        },
         "ImageAreaDoseProduct": {
-            "description": "dose area product", 
-            "display_level": 2, 
-            "display_name": "DAP", 
+            "description": "dose area product",
+            "display_level": 2,
+            "display_name": "DAP",
             "units": "dGycm2"
-        }, 
+        },
         "MTF10": {
             "constraint_minlowhighmax": [
-                3.4, 
-                3.4, 
-                4.4, 
+                3.4,
+                3.4,
+                4.4,
                 4.4
-            ], 
-            "description": "10% MTF cut-off", 
-            "display_level": 2, 
-            "display_name": "Resolution", 
+            ],
+            "description": "10% MTF cut-off",
+            "display_level": 2,
+            "display_name": "Resolution",
             "units": "lp/mm"
-        }, 
+        },
         "Operator's Name": {
-            "description": "name of operator", 
-            "display_level": 2, 
-            "display_name": "Operator", 
+            "description": "name of operator",
+            "display_level": 2,
+            "display_name": "Operator",
             "units": ""
-        }, 
+        },
         "PhantomOrientation": {
-            "constraint_equals": "0.0", 
-            "description": "Orientation of phantom", 
-            "display_level": 2, 
-            "display_name": "Orientation", 
+            "constraint_equals": "0.0",
+            "description": "Orientation of phantom",
+            "display_level": 2,
+            "display_name": "Orientation",
             "units": "deg"
-        }, 
+        },
         "RelativeXRayExposure": {
-            "description": "x-ray exposure relative to target exposure", 
-            "display_level": 2, 
-            "display_name": "RelativeXRayExposure", 
+            "description": "x-ray exposure relative to target exposure",
+            "display_level": 2,
+            "display_name": "RelativeXRayExposure",
             "units": ""
-        }, 
+        },
         "kVp": {
             "constraint_minlowhighmax": [
-                73, 
-                73, 
-                73, 
+                73,
+                73,
+                73,
                 73
-            ], 
-            "description": "tube voltage", 
-            "display_level": 2, 
-            "display_name": "kVp", 
+            ],
+            "description": "tube voltage",
+            "display_level": 2,
+            "display_name": "kVp",
             "units": "kV"
-        }, 
+        },
         "lowCNR_0": {
             "constraint_minlowhighmax": [
-                1.5, 
-                1.5, 
-                3.0, 
+                1.5,
+                1.5,
+                3.0,
                 3.0
-            ], 
-            "description": "low contrast to noise", 
-            "display_level": 2, 
-            "display_name": "lowCNR", 
+            ],
+            "description": "low contrast to noise",
+            "display_level": 2,
+            "display_name": "lowCNR",
             "units": ""
-        }, 
+        },
         "normi13": {
-            "description": "overview of analysis element", 
-            "display_level": 2, 
-            "display_name": "overview", 
+            "description": "overview of analysis element",
+            "display_level": 2,
+            "display_name": "overview",
             "units": ""
-        }, 
+        },
         "xray[E]cm": {
             "constraint_minlowhighmax": [
-                11.8, 
-                12.0, 
-                14.0, 
+                11.8,
+                12.0,
+                14.0,
                 14.2
-            ], 
-            "description": "x-ray boundary east side", 
-            "display_level": 2, 
-            "display_name": "xray[E]", 
+            ],
+            "description": "x-ray boundary east side",
+            "display_level": 2,
+            "display_name": "xray[E]",
             "units": "cm"
-        }, 
+        },
         "xray[N]cm": {
             "constraint_minlowhighmax": [
-                11.8, 
-                12.0, 
-                14.0, 
+                11.8,
+                12.0,
+                14.0,
                 14.2
-            ], 
-            "description": "x-ray boundary north side", 
-            "display_level": 2, 
-            "display_name": "xray[N]", 
+            ],
+            "description": "x-ray boundary north side",
+            "display_level": 2,
+            "display_name": "xray[N]",
             "units": "cm"
-        }, 
+        },
         "xray[S]cm": {
             "constraint_minlowhighmax": [
-                11.8, 
-                12.0, 
-                14.0, 
+                11.8,
+                12.0,
+                14.0,
                 14.2
-            ], 
-            "description": "x-ray boundary south side", 
-            "display_level": 2, 
-            "display_name": "xray[S]", 
+            ],
+            "description": "x-ray boundary south side",
+            "display_level": 2,
+            "display_name": "xray[S]",
             "units": "cm"
-        }, 
+        },
         "xray[W]cm": {
             "constraint_minlowhighmax": [
-                11.8, 
-                12.0, 
-                14.0, 
+                11.8,
+                12.0,
+                14.0,
                 14.2
-            ], 
-            "description": "x-ray boundary west side", 
-            "display_level": 2, 
-            "display_name": "xray[W]", 
+            ],
+            "description": "x-ray boundary west side",
+            "display_level": 2,
+            "display_name": "xray[W]",
             "units": "cm"
         }
     }

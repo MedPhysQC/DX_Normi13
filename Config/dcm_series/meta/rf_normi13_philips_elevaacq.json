@@ -1,131 +1,131 @@
 {
     "comments": {
-        "author": "Arnold Schilham, UMCU", 
-        "creator": "generate_config_json.py version 20180912", 
+        "author": "Arnold Schilham, UMCU",
+        "creator": "generate_config_json.py version 20180912",
         "description": "DX/Normi13 for Philips MultiDiagnost Eleva"
-    }, 
-    "metaformat": "20180910", 
+    },
+    "metaformat": "20180910",
     "results": {
         "AcquisitionDateTime": {
-            "constraint_period": 14, 
-            "description": "date and time of acquisition", 
-            "display_level": 2, 
-            "display_name": "DateTime", 
+            "constraint_period": 14,
+            "description": "date and time of acquisition",
+            "display_level": 2,
+            "display_name": "DateTime",
             "units": ""
-        }, 
+        },
         "CuDR2.3_0.0": {
-            "description": "dynamic range over Cu wedge", 
-            "display_level": 2, 
-            "display_name": "DynamicRange", 
+            "description": "dynamic range over Cu wedge",
+            "display_level": 2,
+            "display_name": "DynamicRange",
             "units": ""
-        }, 
+        },
         "CuSNR_0.0": {
-            "description": "signal to noise ratio in Cu wedge thickness 0.0mm", 
-            "display_level": 2, 
-            "display_name": "SNR", 
+            "description": "signal to noise ratio in Cu wedge thickness 0.0mm",
+            "display_level": 2,
+            "display_name": "SNR",
             "units": ""
-        }, 
+        },
         "DistanceSourceToDetector (mm)": {
             "constraint_minlowhighmax": [
-                118, 
-                119, 
-                121, 
+                118,
+                119,
+                121,
                 122
-            ], 
-            "description": "distance between source and detector", 
-            "display_level": 2, 
-            "display_name": "SID", 
+            ],
+            "description": "distance between source and detector",
+            "display_level": 2,
+            "display_name": "SID",
             "units": "cm"
-        }, 
+        },
         "ImageAreaDoseProduct": {
             "constraint_minlowhighmax": [
-                2.52, 
-                2.6, 
-                3.0, 
+                2.52,
+                2.6,
+                3.0,
                 3.08
-            ], 
-            "description": "dose area product", 
-            "display_level": 2, 
-            "display_name": "DAP", 
+            ],
+            "description": "dose area product",
+            "display_level": 2,
+            "display_name": "DAP",
             "units": "dGycm2"
-        }, 
+        },
         "MTF10": {
-            "description": "10% MTF cut-off", 
-            "display_level": 2, 
-            "display_name": "Resolution", 
+            "description": "10% MTF cut-off",
+            "display_level": 2,
+            "display_name": "Resolution",
             "units": "lp/mm"
-        }, 
+        },
         "PhantomOrientation": {
-            "constraint_equals": "270.0", 
-            "description": "Orientation of phantom", 
-            "display_level": 2, 
-            "display_name": "Orientation", 
+            "constraint_equals": "270.0",
+            "description": "Orientation of phantom",
+            "display_level": 2,
+            "display_name": "Orientation",
             "units": "deg"
-        }, 
+        },
         "kVp": {
             "constraint_minlowhighmax": [
-                80.0, 
-                80.0, 
-                80.0, 
+                80.0,
+                80.0,
+                80.0,
                 80.0
-            ], 
-            "description": "tube voltage", 
-            "display_level": 2, 
-            "display_name": "kVp", 
+            ],
+            "description": "tube voltage",
+            "display_level": 2,
+            "display_name": "kVp",
             "units": "kV"
-        }, 
+        },
         "normi13": {
-            "description": "overview of analysis element", 
-            "display_level": 2, 
-            "display_name": "overview", 
+            "description": "overview of analysis element",
+            "display_level": 2,
+            "display_name": "overview",
             "units": ""
-        }, 
+        },
         "xray[E]cm": {
             "constraint_minlowhighmax": [
-                11.8, 
-                12.0, 
-                14.0, 
+                11.8,
+                12.0,
+                14.0,
                 14.2
-            ], 
-            "description": "x-ray boundary east side", 
-            "display_level": 2, 
-            "display_name": "xray[E]", 
+            ],
+            "description": "x-ray boundary east side",
+            "display_level": 2,
+            "display_name": "xray[E]",
             "units": "cm"
-        }, 
+        },
         "xray[N]cm": {
             "constraint_minlowhighmax": [
-                9.8, 
-                10.0, 
-                12.0, 
+                9.8,
+                10.0,
+                12.0,
                 12.2
-            ], 
-            "description": "x-ray boundary north side", 
-            "display_level": 2, 
-            "display_name": "xray[N]", 
+            ],
+            "description": "x-ray boundary north side",
+            "display_level": 2,
+            "display_name": "xray[N]",
             "units": "cm"
-        }, 
+        },
         "xray[S]cm": {
             "constraint_minlowhighmax": [
-                9.8, 
-                10.0, 
-                12.0, 
+                9.8,
+                10.0,
+                12.0,
                 12.2
-            ], 
-            "description": "x-ray boundary south side", 
-            "display_level": 2, 
-            "display_name": "xray[S]", 
+            ],
+            "description": "x-ray boundary south side",
+            "display_level": 2,
+            "display_name": "xray[S]",
             "units": "cm"
-        }, 
+        },
         "xray[W]cm": {
             "constraint_minlowhighmax": [
-                11.8, 
-                12.0, 
-                14.0, 
+                11.8,
+                12.0,
+                14.0,
                 14.2
-            ], 
-            "description": "x-ray boundary west side", 
-            "display_level": 2, 
-            "display_name": "xray[W]", 
+            ],
+            "description": "x-ray boundary west side",
+            "display_level": 2,
+            "display_name": "xray[W]",
             "units": "cm"
         }
     }

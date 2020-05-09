@@ -11,7 +11,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from __future__ import print_function
 """
 Warning: THIS MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED! And make sure rescaling is corrected!
 
@@ -19,6 +18,7 @@ Note: comparison will be against lit.stTable, if not matched (eg. overwritten by
 
 TODO:
 Changelog:
+    20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
     20190705: Remove double RelativeXRayExposure entry
     20190611: Added use_phantomrotation to skip autodetect phantom rotation
     20180501: Detect infinite loop in CuWedge
@@ -48,7 +48,7 @@ Changelog:
     20160202: added uniformity
     20151109: start of new module, based on QCXRay_lib of Bucky_PEHAMED_Wellhofer of 20151029
 """
-__version__ = '20190705'
+__version__ = '20200508'
 __author__ = 'aschilham'
 
 try:
@@ -56,13 +56,25 @@ try:
 except ImportError:
     import dicom
 import numpy as np
-import scipy.ndimage as scind
 
-import matplotlib.pyplot as plt
 from PIL import Image # image from pillow is needed
 from PIL import ImageDraw # imagedraw from pillow is needed, not pil
-import scipy.misc
+try:
+    from scipy.misc import toimage
+except (ImportError, AttributeError) as e:
+    try:
+        # try local version
+        from wadwrapper_lib import toimage as toimage
+    except (ImportError, AttributeError) as e:
+        try:
+            # try package version
+            from wad_qc.modulelibs.wadwrapper_lib import toimage as toimage
+        except (ImportError, AttributeError) as e:
+            msg = "Function 'toimage' cannot be found. Either downgrade scipy or upgrade WAD-QC."
+            raise AttributeError("{}: {}".format(msg, e))
+
 # sanity check: we need at least scipy 0.10.1 to avoid problems mixing PIL and Pillow
+import scipy
 scipy_version = [int(v) for v in scipy.__version__ .split('.')]
 if scipy_version[0] == 0:
     if scipy_version[1]<10 or (scipy_version[1] == 10 and scipy_version[1]<1):
@@ -386,7 +398,7 @@ class XRayQC:
         # convert to 8-bit palette mapped image with lowest palette value used = 1
         if what == 'normi13':
             # first the base image
-            im = scipy.misc.toimage(cs.pixeldataIn.transpose(),low=1,pal=pal) # MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
+            im = toimage(cs.pixeldataIn.transpose(),low=1,pal=pal) # MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
 
             # now add all box rois
             if len(cs.geom.box_roi) >0:
@@ -427,15 +439,15 @@ class XRayQC:
                 mask = pdCopy>cut
                 pdCopy[mask] = cut
 
-                #im = scipy.misc.toimage(cs.pixeldataIn.transpose(),low=1,pal=pal) # MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
-                im = scipy.misc.toimage(pdCopy.transpose(),low=1,pal=pal) # MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
+                #im = toimage(cs.pixeldataIn.transpose(),low=1,pal=pal) # MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
+                im = toimage(pdCopy.transpose(),low=1,pal=pal) # MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
 
             elif what == 'artefacts':
                 # first copy the artimage into the base image
                 wid,hei = np.shape(cs.unif.art_image)
                 pdCopy = np.zeros(np.shape(cs.pixeldataIn))
                 pdCopy[art_crop[0]:art_crop[1],art_crop[2]:art_crop[3]] = cs.unif.art_image
-                im = scipy.misc.toimage(pdCopy.transpose(),low=1,pal=pal) # MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
+                im = toimage(pdCopy.transpose(),low=1,pal=pal) # MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
 
             # now add all box rois
             # add uniformity crop area
