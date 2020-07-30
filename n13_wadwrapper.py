@@ -20,6 +20,7 @@
 # 
 #
 # Changelog:
+#   20200729: attempt to fix phantom_orientation for small detectors
 #   20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
 #   20190705: Remove double entry RelativeXRayExposure and add to floats: ExposureTime, ExposureIndex, DeviationIndex,TargetExposureIndex
 #   20190611: Added use_phantomrotation to skip autodetect phantom rotation
@@ -41,8 +42,10 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20200508'
+__version__ = '20200729'
 __author__ = 'aschilham'
+GUIMODE = True
+GUIMODE = False
 
 import os
 if not 'MPLCONFIGDIR' in os.environ:
@@ -56,7 +59,8 @@ if not 'MPLCONFIGDIR' in os.environ:
         os.environ['MPLCONFIGDIR'] = "/tmp/.matplotlib" # if this folder already exists it must be accessible by the owner of WAD_Processor 
 
 import matplotlib
-matplotlib.use('Agg') # Force matplotlib to not use any Xwindows backend.
+if not GUIMODE:
+    matplotlib.use('Agg') # Force matplotlib to not use any Xwindows backend.
 
 try:
     import pydicom as dicom
@@ -297,7 +301,6 @@ def qc_series(data, results, action):
 
     ## 2. Check data format
     dcmInfile,pixeldataIn,dicomMode = wadwrapper_lib.prepareInput(inputfile,headers_only=False,logTag=logTag())
-
     # select only middle slice for series
     numslices = len(pixeldataIn)
     if dicomMode == wadwrapper_lib.stMode3D:

@@ -18,6 +18,7 @@ Note: comparison will be against lit.stTable, if not matched (eg. overwritten by
 
 TODO:
 Changelog:
+    20200729: attempt to fix phantom_orientation for small detectors
     20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
     20190705: Remove double RelativeXRayExposure entry
     20190611: Added use_phantomrotation to skip autodetect phantom rotation
@@ -48,7 +49,7 @@ Changelog:
     20160202: added uniformity
     20151109: start of new module, based on QCXRay_lib of Bucky_PEHAMED_Wellhofer of 20151029
 """
-__version__ = '20200508'
+__version__ = '20200729'
 __author__ = 'aschilham'
 
 try:
@@ -828,30 +829,49 @@ class XRayQC:
 
         #print('[QCNormi13]',cs.dcmInfile.SeriesDescription)
 
-        # 1.1 geometry: crop
-        error = self.CropNormi13(cs)
-        if error:
-            msg += 'Crop '
+        pix_data_bk = cs.pixeldataIn.copy()
+        skip_crop = False
+        for idea in [None, 'skip_crop']:
+            if idea == 'skip_crop':
+                skip_crop = True
+            try:
+                # 1.1 geometry: crop
+                if not skip_crop:
+                    error = self.CropNormi13(cs)
+                    if error:
+                        msg += 'Crop '
         
-        # 1.2 geometry: orientation
-        if not error:
-            error = self.FixPhantomOrientation(cs)
-            if error:
-                msg += 'Orientation '
+                # 1.2 geometry: orientation
+                if not error:
+                    error = self.FixPhantomOrientation(cs)
+                    if error:
+                        msg += 'Orientation '
+                import matplotlib.pylab as plt
+                if 0:
+                    plt.figure()
+                    plt.title("Fix")
+                    plt.imshow(cs.pixeldataIn.T)
+                    plt.show()
 
-        # 1.3 geometry: phantom coordinates
-        if not error:
-            error = self.FindPhantomGrid(cs)
-            if error:
-                msg += 'Grid '
-                error = False
+                # 1.3 geometry: phantom coordinates
+                if not error:
+                    error = self.FindPhantomGrid(cs)
+                    if error:
+                        msg += 'Grid '
+                        error = False
+        
+                # 1.4: travel straight along NS and find edge of x-ray; similar for EW
+                if not error:
+                    error = self.XRayField(cs)
+                    if error:
+                        msg += 'XRayField '
+                break 
 
-        # 1.4: travel straight along NS and find edge of x-ray; similar for EW
-        if not error:
-            error = self.XRayField(cs)
-            if error:
-                msg += 'XRayField '
-
+            except Exception as e:
+                print(e)
+                cs.pixeldataIn = pix_data_bk.copy()
+                continue
+                    
         # 2: find Cu wedge stuff
         if not error:
             error = self.CuWedge(cs)

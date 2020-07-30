@@ -145,7 +145,7 @@ def FixPhantomOrientation(cs):
     # 2. Make box at x-5cm and calculate avg
     seppx = int(cs.phantommm2pix(20))# 2 cm away from edges
     seppx = int(cs.phantommm2pix(10))# 2 cm away from edges
-
+    gappx = 0
     widthpx = np.shape(cs.pixeldataIn)[0] ## width/height in pixels
     heightpx = np.shape(cs.pixeldataIn)[1]
 
@@ -153,9 +153,9 @@ def FixPhantomOrientation(cs):
     max_frac = 0.6
     while still_in_edge:
         seppx += int(cs.phantommm2pix(10))# 2 cm away from edges
-        smallimage = cs.pixeldataIn[seppx:widthpx-seppx:3,seppx:heightpx-seppx:3] #every third pixel
+        smallimage = cs.pixeldataIn[seppx+gappx*3:widthpx-seppx-gappx*3:3,seppx+gappx*3:heightpx-seppx-gappx*3:3] #every third pixel
         smallimage = scind.gaussian_filter(smallimage, sigma=5, )
-    
+        
         # find quandrant with min transmission; count which quad has most low transmission pix
         minim = smallimage.min()
         maxim = smallimage.max()
@@ -164,22 +164,45 @@ def FixPhantomOrientation(cs):
         imhei2 = int(imhei/2)
         imwid2 = int(imwid/2)
         thresmax = minim+.05*(maxim-minim) # 5% higher than minimum
-        # make sure the outside of the phantom is not included
-        if np.sum(smallimage[  0:imwid,  0        ]<thresmax) > max_frac*imwid:
-            continue
-        if np.sum(smallimage[  0:imwid, -1        ]<thresmax) > max_frac*imwid:
-            continue
-        if np.sum(smallimage[  0,        0:imhei ]<thresmax) > max_frac*imhei:
-            continue
-        if np.sum(smallimage[ -1,        0:imhei ]<thresmax) > max_frac*imhei:
-            continue
-        still_in_edge = False
 
+        smallimage = smallimage<thresmax
+        
+        # make sure the outside of the phantom is not included
+        # attempt to increase gap on edges to reduce black border
+        found = False
+        for y in range(1,imhei-1):
+            if np.sum(smallimage[  0:imwid+1, y-1:y+2 ]) > max_frac*imwid:
+                found = True
+                gappx = y if y<imhei/2 else imhei-y-1
+                break
+        if found:
+            continue
+            
+        # check corners (if any of the corners is below the threshold, we're still in the edge)
+        n_check = 2
+        corners = 0
+        corners += np.sum(smallimage[         0:n_check+1,        0:n_check+1 ])
+        corners += np.sum(smallimage[  -n_check:imwid+1,          0:n_check+1 ])
+        corners += np.sum(smallimage[         0:n_check+1, -n_check:imhei+1 ])
+        corners += np.sum(smallimage[  -n_check:imwid+1,   -n_check:imhei+1 ])
+        if corners>0:
+            continue
+            
+        for x in range(1,imwid-1):
+            if np.sum(smallimage[  x-1:x+2, 0:imhei+1 ]) > max_frac*imhei:
+                found = True
+                gappx = x if x<imwid/2 else imwid-x-1
+                break
+        if found:
+            continue
+
+        still_in_edge = False
+        
         count = np.array([0,0,0,0])
-        count[0] = np.sum(smallimage[     0:imwid2,      0:imhei2]<thresmax)
-        count[1] = np.sum(smallimage[imwid2:imwid,       0:imhei2]<thresmax)
-        count[2] = np.sum(smallimage[imwid2:imwid,  imhei2:imhei]<thresmax)
-        count[3] = np.sum(smallimage[     0:imwid2, imhei2:imhei]<thresmax)
+        count[0] = np.sum(smallimage[     0:imwid2,      0:imhei2])
+        count[1] = np.sum(smallimage[imwid2:imwid,       0:imhei2])
+        count[2] = np.sum(smallimage[imwid2:imwid,  imhei2:imhei])
+        count[3] = np.sum(smallimage[     0:imwid2, imhei2:imhei])
 
         count0 = count.argmax()
 
@@ -226,21 +249,37 @@ def FindPhantomGrid(cs):
     The input image should be properly cropped (CropPhantom) and oriented (FixPhantomOrientation).
     """
     error = False
-    # first try a to find 90x90 box
-    roipts = _FindPhantomBox(cs, vertical=None, assumegood=False)
-
-    # if it fails, try 70x90 box
-    if roipts is None:
-        print("Could not find 90x90 box, will try 90x70")
-        roipts = _FindPhantomBox(cs, vertical=50, assumegood=False)
-
+    found = False
+    for sepmm in [10, 0]: # also try no skip sides
+        if found:
+            break
+        
+        for sigma in [None, 5]: # also try some blurring
+            # first try a to find 90x90 box
+            roipts = _FindPhantomBox(cs, vertical=None, assumegood=False, sigma=sigma, sepmm=sepmm)
+        
+            # if it fails, try 70x90 box
+            if roipts is None:
+                print("Could not find 90x90 box, will try 90x70")
+                roipts = _FindPhantomBox(cs, vertical=50, assumegood=False, sigma=sigma, sepmm=sepmm)
+    
+            if not roipts is None:
+                bberror, roipts, box_confidence = _FineTunePhantomBox(cs, roipts)
+    
+                if bberror:
+                    roipts = None
+                
+            if not roipts is None:
+                found = True
+                break
+        
     # if it fails, try assume perfectly position and try to continue
     if roipts is None:
         print("Could not find 90x70 box, will assume 90x70")
-        roipts = _FindPhantomBox(cs, vertical=50, assumegood=True)
+        roipts = _FindPhantomBox(cs, vertical=50, assumegood=True, sigma=None)
 
-    cs.geom.box_roi = roipts
-    error, roipts, box_confidence = _FineTunePhantomBox(cs, roipts)
+        cs.geom.box_roi = roipts
+        error, roipts, box_confidence = _FineTunePhantomBox(cs, roipts)
 
     cs.geom.box_roi = roipts
     cs.geom.box_confidence = box_confidence
@@ -259,7 +298,7 @@ def FindPhantomGrid(cs):
     cs.geom.center_shiftxy = [roi_midx+xmin_px-orig_midx, roi_midy+ymin_px-orig_midy]
     return error
 
-def _FindPhantomBox(cs, vertical=None, assumegood=False):
+def _FindPhantomBox(cs, vertical=None, assumegood=False, sigma=None, sepmm=10):
     """
     Draw lines from center outwards. Find first narrow valleys of 90 mm copper lines.
     North: must pass through Cu gap between steps; can be missing on small detector
@@ -298,7 +337,7 @@ def _FindPhantomBox(cs, vertical=None, assumegood=False):
     else:
         hlinepx = int(max(2,cs.phantommm2pix(1)+.5)) # don't expect a gridline to be larger than 2mm
         #seppx = int(cs.phantommm2pix(20))# stop 2 cm away from image edges
-        seppx = int(cs.phantommm2pix(10))# stop 1 cm away from image edges (arbitrarily)
+        seppx = int(cs.phantommm2pix(sepmm))# stop 1 cm away from image edges (arbitrarily)
         blockheight = 10 # px number of lines to average (get rid of noise!)
 
         if vertical is None:
@@ -321,7 +360,9 @@ def _FindPhantomBox(cs, vertical=None, assumegood=False):
                         stepx = 1 if r[1]>r[0] else -1
                         stepy = 1 if r[3]>r[2] else -1
                         smallimage = cs.pixeldataIn[r[0]:r[1]:stepx,r[2]:r[3]:stepy]
-        
+                        if not sigma is None:
+                            smallimage = scind.gaussian_filter(smallimage, sigma=5)
+                        
                         ep, line, threshold = _findDropLine(smallimage, hlinepx, removeTrend=True, factor=factor)
                         if ep == -1:
                             print(threshold,line)
@@ -344,7 +385,8 @@ def _FindPhantomBox(cs, vertical=None, assumegood=False):
                 plt.plot(edgepos,len(edgepos)*[threshold],'ro')
                 print(edgepos)
                 plt.legend()
-
+                #plt.show()
+                
             for p,k in zip(edgepos,['N','E','S','W']):
                 print(k,p,cs.pix2phantommm(p))
 
