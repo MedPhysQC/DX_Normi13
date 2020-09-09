@@ -361,7 +361,7 @@ def _FindPhantomBox(cs, vertical=None, assumegood=False, sigma=None, sepmm=10):
                         stepy = 1 if r[3]>r[2] else -1
                         smallimage = cs.pixeldataIn[r[0]:r[1]:stepx,r[2]:r[3]:stepy]
                         if not sigma is None:
-                            smallimage = scind.gaussian_filter(smallimage, sigma=5)
+                            smallimage = scind.gaussian_filter(smallimage, sigma=sigma)
                         
                         ep, line, threshold = _findDropLine(smallimage, hlinepx, removeTrend=True, factor=factor)
                         if ep == -1:
@@ -419,6 +419,9 @@ def _FindPhantomBox(cs, vertical=None, assumegood=False, sigma=None, sepmm=10):
                 stepx = 1 if r[1]>r[0] else -1
                 stepy = 1 if r[3]>r[2] else -1
                 smallimage = cs.pixeldataIn[r[0]:r[1]:stepx,r[2]:r[3]:stepy]
+                if not sigma is None:
+                    smallimage = scind.gaussian_filter(smallimage, sigma=sigma)
+
                 ep, line, threshold = _findDropLine(smallimage, hlinepx, removeTrend=True)
                 if ep == -1:
                     print(threshold,line)
