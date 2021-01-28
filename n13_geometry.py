@@ -83,7 +83,7 @@ class GeomStruct:
         self.box_confidence = 0.
         self.box_orientation = 0     # rotation of box in degrees (0, 90, 180, 270)
         self.center_shiftxy = [0, 0] # shift of box center wrt to center of uncropped image in px
-        self.xr_NSWEmm = []          # edges of xray exposure in mm
+        self.xr_NSWEmm = [0,0,0,0]   # edges of xray exposure in mm
         self.xr_roi = []             # edges of xray exposure in px on cropped im
         self.orig_shape = []         # width,height in px of original image, so before cropping
         
@@ -121,13 +121,14 @@ def CropPhantom(cs):
         cs.geom.crop_inoutoverin = cs_unif.unif_crop_inoutoverin 
     return error
 
-def FixPhantomOrientation(cs):
+def FixPhantomOrientation(cs, limits=None):
     """
     Concept: Try to find out if phantom is rotated over 90, 180 or 270 degrees (WKZ mostly)
     Workflow:
     1. Find center and orientation
     2. Find most likely location of CuWedge (thick)
     3. Use location wrt center to find and undo 90 degree rotations
+    limits: use start limits x0, y0, x1, y1
     """
     error = False
     if not getattr(cs.forceRoom, 'use_phantomrotation', None) is None:
@@ -149,11 +150,18 @@ def FixPhantomOrientation(cs):
     widthpx = np.shape(cs.pixeldataIn)[0] ## width/height in pixels
     heightpx = np.shape(cs.pixeldataIn)[1]
 
+    xmin, xmax = 0, widthpx
+    ymin, ymax = 0, heightpx
+    if not limits is None:
+        xmin, xmax = limits[1], limits[3]
+        ymin, ymax = limits[0], limits[2]
+        seppx = 0 
+        
     still_in_edge = True
     max_frac = 0.6
     while still_in_edge:
         seppx += int(cs.phantommm2pix(10))# 2 cm away from edges
-        smallimage = cs.pixeldataIn[seppx+gappx*3:widthpx-seppx-gappx*3:3,seppx+gappx*3:heightpx-seppx-gappx*3:3] #every third pixel
+        smallimage = cs.pixeldataIn[xmin+seppx+gappx*3:xmax-seppx-gappx*3:3,ymin+seppx+gappx*3:ymax-seppx-gappx*3:3] #every third pixel
         smallimage = scind.gaussian_filter(smallimage, sigma=5, )
         
         # find quandrant with min transmission; count which quad has most low transmission pix
@@ -197,7 +205,7 @@ def FixPhantomOrientation(cs):
             continue
 
         still_in_edge = False
-        
+
         count = np.array([0,0,0,0])
         count[0] = np.sum(smallimage[     0:imwid2,      0:imhei2])
         count[1] = np.sum(smallimage[imwid2:imwid,       0:imhei2])
@@ -827,22 +835,18 @@ def BBROIConfidence(cs, roipts):
     print('BBConfidence =', (confidence*100.),'%')
     return confidence
 
-def XRayField(cs):
+def XRayField(cs, workim=None):
     """
     Find edges of XRay exposure along the lines of the grid box.
     Use either min across line between box and edge, or use corner values
     """
     # remove noise; alternatively sample more pixels and average.
-    workim = scind.gaussian_filter(cs.pixeldataIn, sigma=5)
+    if workim is None:
+        workim = scind.gaussian_filter(cs.pixeldataIn, sigma=5)
 
     error = False
 
-    xr_NSWEmm = []
-    # north- and southside
-    xr_NSWEmm.append(FindXRayEdge(cs, 'N', workim, rawim=cs.pixeldataIn))
-    xr_NSWEmm.append(FindXRayEdge(cs, 'S', workim, rawim=cs.pixeldataIn))
-    xr_NSWEmm.append(FindXRayEdge(cs, 'W', workim, rawim=cs.pixeldataIn))
-    xr_NSWEmm.append(FindXRayEdge(cs, 'E', workim, rawim=cs.pixeldataIn))
+    xr_NSWEmm = [FindXRayEdge(cs, ed, workim, rawim=cs.pixeldataIn) for ed in ['N', 'S', 'W', 'E']]
     if min(xr_NSWEmm)<1.:
         error = True
     else:

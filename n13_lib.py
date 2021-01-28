@@ -18,6 +18,7 @@ Note: comparison will be against lit.stTable, if not matched (eg. overwritten by
 
 TODO:
 Changelog:
+    20210104: Fix: redo without cropping always failed.
     20200729: attempt to fix phantom_orientation for small detectors
     20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
     20190705: Remove double RelativeXRayExposure entry
@@ -49,7 +50,7 @@ Changelog:
     20160202: added uniformity
     20151109: start of new module, based on QCXRay_lib of Bucky_PEHAMED_Wellhofer of 20151029
 """
-__version__ = '20200729'
+__version__ = '20210104'
 __author__ = 'aschilham'
 
 try:
@@ -153,6 +154,32 @@ class XRayStruct:
     ###
     # class variables
     roomUnknown = Room(lit.stUnknown)
+    def getBitsStored(self):
+        """
+        """
+        # determine max allowed pixelvalue; as 2^bits_stored -1; note this value is not properly stored in dcmfileIn.BitsStored!
+        dicomfields = [ ["0028,0101",  "Bits Stored"]]
+        key = dicomfields[0][0]
+        dicvalue = self.dcmInfile[dicom.tag.Tag(key.split(',')[0],key.split(',')[1])].value
+        if dicvalue == "":
+            return None
+        else:
+            return dicvalue
+
+    def get_max_pixel_value(self):
+        """
+        helper to get max pixel value
+        """
+        if self.max_pixel_value in [0, None]:
+            # determine max allowed pixelvalue; as 2^bits_stored -1; note this value is not properly stored in dcmfileIn.BitsStored!
+            dicomfields = [ ["0028,0101",  "Bits Stored"]]
+            key = dicomfields[0][0]
+            dicvalue = self.dcmInfile[dicom.tag.Tag(key.split(',')[0],key.split(',')[1])].value
+            if dicvalue == "":
+                self.max_pixel_value = None
+            else:
+                self.max_pixel_value = (2**dicvalue)-1
+        return self.max_pixel_value
 
     def PreCropImage(self):
         """
@@ -204,13 +231,9 @@ class XRayStruct:
             print("Must be Inverted (use)",self.forceRoom.mustbeinverted)
             self.original_inverted = self.forceRoom.mustbeinverted
         else:
-            # determine max allowed pixelvalue; as 2^bits_stored -1; note this value is not properly stored in dcmfileIn.BitsStored!
-            dicomfields = [ ["0028,0101",  "Bits Stored"]]
-            key = dicomfields[0][0]
-            dicvalue = self.dcmInfile[dicom.tag.Tag(key.split(',')[0],key.split(',')[1])].value
-            if dicvalue == "":
+            self.max_pixel_value = self.get_max_pixel_value()
+            if self.max_pixel_value is None:
                 return error
-            self.max_pixel_value = (2**dicvalue)-1
     
             # now check storage format
             self.original_inverted = False
@@ -362,7 +385,6 @@ class XRayStruct:
 class XRayQC:
     def __init__(self):
         self.qcversion = __version__
-        pass
 
     def drawThickCircle(self,draw,x,y,rad,color,thick):
         for t in range(-int((thick-1)/2),int((thick+1)/2)):
@@ -493,7 +515,7 @@ class XRayQC:
             im = im.resize( (int(imsi[0]*ratio+.5), int(imsi[1]*ratio+.5)),Image.ANTIALIAS)
         im.save(fname)
 
-    #------------------- new
+    #------------------- 
     def MTF(self, cs):
         # Calulate MTF from line pairs element
         return Resolution.MTF(cs)
@@ -535,9 +557,9 @@ class XRayQC:
         # Resolve Phantom Coordinates
         return Geometry.FindPhantomGrid(cs)
 
-    def FixPhantomOrientation(self, cs):
+    def FixPhantomOrientation(self, cs, limits=None):
         # Rotate over 90, 180, 270 if needed
-        return Geometry.FixPhantomOrientation(cs)
+        return Geometry.FixPhantomOrientation(cs, limits)
 
     def CropNormi13(self, cs):
         # Crop image to phantom if needed
@@ -807,6 +829,13 @@ class XRayQC:
         labvals.append( {'name':'AreaMTF5','value':mymath.AreaUnderCurve(cs.mtf.contrast_freqs,cs.mtf.ctfmtf),'level':2} )
         labvals.append( {'name':'MTF10','value':mymath.MTF10pct(cs.mtf.contrast_freqs,cs.mtf.ctfmtf),'level':2} )
 
+        ## hough
+        try:
+            labvals.append( {'name':'HoughAvgSNR', 'value':cs.hough_avg_snr, 'level':2} )
+            labvals.append( {'name':'HoughRThresholdHi', 'value':cs.hough_rthreshold_hi, 'level':2} )
+        except:
+            pass
+
         return labvals
 
     def QC(self, cs):
@@ -832,6 +861,7 @@ class XRayQC:
         pix_data_bk = cs.pixeldataIn.copy()
         skip_crop = False
         for idea in [None, 'skip_crop']:
+            error = False
             if idea == 'skip_crop':
                 skip_crop = True
             try:
@@ -865,6 +895,15 @@ class XRayQC:
                     error = self.XRayField(cs)
                     if error:
                         msg += 'XRayField '
+
+                # 2: find Cu wedge stuff
+                if not error:
+                    error = self.CuWedge(cs)
+                    if error:
+                        msg += 'CuWedge '
+                        
+                if error:
+                    raise ValueError("Fail! {}:{}".format(msg, cs.forceRoom.outvalue))
                 break 
 
             except Exception as e:
@@ -872,12 +911,6 @@ class XRayQC:
                 cs.pixeldataIn = pix_data_bk.copy()
                 continue
                     
-        # 2: find Cu wedge stuff
-        if not error:
-            error = self.CuWedge(cs)
-            if error:
-                msg += 'CuWedge '
-
         # 3: low contrast stuff
         if not error:
             error = self.LowContrast(cs)

@@ -1021,7 +1021,7 @@ def StructureDetector(inImage, bksigma = None,uiobject=None):
 
     return Lxx
 
-def LocalSNR(pSrc, sigma,bksigma = None, uiobject=None):
+def LocalSNR(pSrc, sigma,bksigma = None, uiobject=None, sd_offset=0.):
     """
     Local SNR: [ mean(x,y) ]/stdev(x,y)
     Can be approximated as [ Gauss{I,sigma}] / sqrt[ Gauss{I-Gauss{I,sigma},sigma}^2]
@@ -1035,12 +1035,15 @@ def LocalSNR(pSrc, sigma,bksigma = None, uiobject=None):
     if uiobject:
         uiobject.pbar.doProgress("dev'd")
         print("[LocalSNR] 2/4 dev'd")
-    sdIm  = np.sqrt(scind.gaussian_filter(devIm**2,sigma,order=[0,0]))
-    sdIm[sdIm<1.e-6]=1. # prevent div by zero
+    sdIm  = np.sqrt(scind.gaussian_filter(devIm**2,sigma,order=[0,0]))+sd_offset
+    zero_mask = sdIm<1.e-6
+    sdIm[zero_mask]=1. # prevent div by zero
     if uiobject:
         uiobject.pbar.doProgress("std'd")
         print("[LocalSNR] 3/4 std'd")
     locnormIm = blurIm/sdIm
+    locnormIm[zero_mask] = 0.
+    
     if uiobject:
         print("[LocalSNR] 4/4 snr'd")
     if bksigma is not None:
@@ -1051,7 +1054,7 @@ def LocalSNR(pSrc, sigma,bksigma = None, uiobject=None):
     if uiobject:
         uiobject.pbar.endProgress()
     #blurIm = scind.gaussian_filter(locnormIm,sigma,order=[2,0])**2+scind.gaussian_filter(locnormIm,sigma,order=[0,2])**2
-    #return blurIm
+    #return pSrc
     return locnormIm
 
 def LocalNorm(pSrc, sigma,bksigma = None, uiobject=None):

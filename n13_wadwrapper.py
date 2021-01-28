@@ -20,6 +20,7 @@
 # 
 #
 # Changelog:
+#   20210127: first stable with hough line detector; use old/legacy method if hough_options are NOT defined, if {} then use Hough with defaults
 #   20200729: attempt to fix phantom_orientation for small detectors
 #   20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
 #   20190705: Remove double entry RelativeXRayExposure and add to floats: ExposureTime, ExposureIndex, DeviationIndex,TargetExposureIndex
@@ -42,7 +43,7 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20200729'
+__version__ = '20210127'
 __author__ = 'aschilham'
 GUIMODE = True
 GUIMODE = False
@@ -66,7 +67,8 @@ try:
     import pydicom as dicom
 except ImportError:
     import dicom
-import n13_lib
+import n13_lib as n13_lib
+import n13hough_lib as n13hough_lib
 import numpy as np
 
 # try system package wad_qc
@@ -277,7 +279,7 @@ def _getRoomDefinition(params, test):
 
 
 ###### Series wrappers
-def qc_series(data, results, action):
+def qc_series(data, results, action, hough_override={}):
     """
     n13_UMCU checks:
         XRayEdges
@@ -306,12 +308,46 @@ def qc_series(data, results, action):
     if dicomMode == wadwrapper_lib.stMode3D:
         nim = int(len(pixeldataIn)/2.)
         dcmInfile   = dcmInfile._datasets[nim]
-        pixeldataIn = np.average(pixeldataIn, axis=0)
+        #pixeldataIn = np.average(pixeldataIn, axis=0)
+        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(np.int) # do not change type
+        dicomMode = wadwrapper_lib.stMode2D
+    elif len(pixeldataIn.shape) == 3: # multi slice single frame
+        nim = int(len(pixeldataIn)/2.)
+        dcmInfile   = dcmInfile#._datasets[nim]
+        #pixeldataIn = np.average(pixeldataIn, axis=0)
+        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(np.int) # do not change type
         dicomMode = wadwrapper_lib.stMode2D
 
     ## 3. Build and populate qcstructure
     remark = ""
-    qclib = n13_lib.XRayQC()
+    
+    # determine if to use legacy or Hough
+    if params.get("hough_options", None) == None:
+        print(logTag()+' using legacy method')
+        qclib = n13_lib.XRayQC()
+    else:
+        print(logTag()+' using Hough method')
+        qclib = n13hough_lib.XRayQC()
+        
+        # default options
+        hough_options = {
+            'hough_mode': "meijering",
+            'frac_hi': 0.0, # ignore norm values above dip+frac_hi*(avg-dip)
+            'edge_mfrac': .5, # 0.5 # keep only >0.5
+            'min_len_mm': 90., # minimal number of points on hough line,
+            'pre_blur': 0.66, # reduce noise by gaussian blurring with this sigma (px)
+            "hough_verbose": False,
+        }
+    
+        for k,v in params.get("hough_options", {}).items():
+            hough_options[k] = v
+    
+        #manually override here for testing
+        for k, v in hough_override.items():
+            hough_options[k] = v
+            
+        qclib.hough_options = hough_options
+
     room = _getRoomDefinition(params, "qc")
     cs = n13_lib.XRayStruct(dcmInfile,pixeldataIn,room)
     cs.verbose = False # do not produce detailed logging
@@ -328,14 +364,15 @@ def qc_series(data, results, action):
         
     ## first Build artefact picture thumbnail
     label = 'normi13'
-    filename = '%s%s.jpg'%(label,idname) # Use jpg if a thumbnail is desired
+    outpath = results._out_path.split(".json")[0]
+    filename = '{}_{}{}.jpg'.format(outpath, label, idname) # Use jpg if a thumbnail is desired
 
     qclib.saveAnnotatedImage(cs, filename, 'normi13')
-    varname = '%s%s'%(label,idname)
+    varname = '{}{}'.format(label,idname)
     results.addObject(varname, filename)
 
     labvals = qclib.ReportEntries(cs)
-    tmpdict={}
+
     for elem in labvals:
         varname = elem['name']+str(idname)
         results.addFloat(varname, elem['value'])
@@ -403,7 +440,6 @@ def qc_uniformity_series(data, results, action):
     results.addObject(varname, filename)
 
     labvals = qclib.ReportEntries(cs)
-    tmpdict={}
     for elem in labvals:
         varname = elem['name']+str(idname)
         results.addFloat(varname, elem['value'])
@@ -502,7 +538,7 @@ def header_series(data, results, action):
     varname = 'stand'+idname
     results.addString(varname, cs.DetectorStand())
 
-if __name__ == "__main__":
+def main(hough_override={}):
     data, results, config = pyWADinput()
 
     # read runtime parameters for module
@@ -514,7 +550,7 @@ if __name__ == "__main__":
             header_series(data, results, action)
         
         elif name == 'qc_series':
-            qc_series(data, results, action)
+            qc_series(data, results, action, hough_override)
 
         elif name == 'uniformity_series':
             qc_uniformity_series(data, results, action)
@@ -522,3 +558,8 @@ if __name__ == "__main__":
     #results.limits["minlowhighmax"]["mydynamicresult"] = [1,2,3,4]
 
     results.write()
+    
+if __name__ == "__main__":
+    # main in separate function to be called by n13hough_tester
+    main()
+    

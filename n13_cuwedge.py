@@ -30,11 +30,11 @@ class CuStruct:
         self.box_roi = [] # max horizontal box in complete edge
 
         # for each step: mmCu, roi, snr, cnr, mean, sdev
-        self.step_mean = []
-        self.step_sdev = []
-        self.step_snr = []
-        self.step_cnr = []
-        self.step_mmcu = []
+        self.step_mean = [0,0,0,0,0,0,0]
+        self.step_sdev = [0,0,0,0,0,0,0]
+        self.step_snr = [0,0,0,0,0,0,0]
+        self.step_cnr = [0,0,0,0,0,0,0]
+        self.step_mmcu = [0,0,0,0,0,0,0]
 
         self.wedge_confidence = -1.
 
@@ -107,7 +107,7 @@ def _AnalyseWedge(cs):
         plt.imshow(smallimage)
         plt.title('Cu Wedge')
         cs.hasmadeplots = True
-
+        
     # 2.1 make a profile
     profile = np.zeros(wid,dtype=float)
     for ix in range(0,wid):
@@ -132,8 +132,11 @@ def _AnalyseWedge(cs):
     infloop_miniy = None
     infloop_maxiy = None
     infloop_count = 0
-    
+
+    # early stopping
+    max_tries = 200
     for ix in range(0,n_edges):
+        tries = 0
         accept = False
         while(not accept):
             """
@@ -141,6 +144,12 @@ def _AnalyseWedge(cs):
             For simplicity, check if peak not too close to others (then prob. noisy)
             If acceptable, flatten part of profile
             """
+            tries += 1
+            if tries>max_tries:
+                print("Stuck. Quit.")
+                error = True
+                return error
+                
             profminid = np.unravel_index(profile.argmax(), profile.shape)[0]
             miniy = max(0,profminid-flatpix)
             maxiy = min(wid-1,profminid+flatpix)

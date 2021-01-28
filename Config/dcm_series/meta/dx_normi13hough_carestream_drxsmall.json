@@ -1,0 +1,174 @@
+{
+    "comments": {
+        "author": "Arnold Schilham, UMCU",
+        "creator": "generate_config_json.py version 20180912",
+        "description": "DX/Normi13Hough for Carestream DRX-Revolution"
+    },
+    "metaformat": "20180910",
+    "results": {
+        "AcquisitionDateTime": {
+            "constraint_period": 14,
+            "description": "date and time of acquisition",
+            "display_level": 2,
+            "display_name": "DateTime",
+            "units": ""
+        },
+        "CuDR2.3_0.0": {
+            "constraint_minlowhighmax": [
+                1.75,
+                1.75,
+                4.5,
+                4.5
+            ],
+            "description": "dynamic range over Cu wedge",
+            "display_level": 2,
+            "display_name": "DynamicRange",
+            "units": ""
+        },
+        "CuSNR_0.0": {
+            "description": "signal to noise ratio in Cu wedge thickness 0.0mm",
+            "display_level": 2,
+            "display_name": "SNR",
+            "units": ""
+        },
+        "DeviceSerialNumber": {
+            "description": "serial number of device",
+            "display_level": 1,
+            "display_name": "DeviceSerialNumber",
+            "units": ""
+        },
+        "Exposure (uAs)": {
+            "constraint_minlowhighmax": [
+                1599,
+                1599,
+                1601,
+                1601
+            ],
+            "description": "tube load",
+            "display_level": 2,
+            "display_name": "uAs",
+            "units": "uAs"
+        },
+        "Focal Spot(s)": {
+            "constraint_equals": "0.6",
+            "description": "size of focal spot",
+            "display_level": 2,
+            "display_name": "FocalSpot",
+            "units": ""
+        },
+        "ImageAreaDoseProduct": {
+            "description": "dose area product",
+            "display_level": 2,
+            "display_name": "DAP",
+            "units": "dGycm2"
+        },
+        "MTF10": {
+            "description": "10% MTF cut-off",
+            "display_level": 2,
+            "display_name": "Resolution",
+            "units": "lp/mm"
+        },
+        "Operator's Name": {
+            "description": "name of operator",
+            "display_level": 2,
+            "display_name": "Operator",
+            "units": ""
+        },
+        "RelativeXRayExposure": {
+            "description": "x-ray exposure relative to target exposure",
+            "display_level": 2,
+            "display_name": "RelativeXRayExposure",
+            "units": ""
+        },
+        "Sensitivity": {
+            "description": "sensitivity",
+            "display_level": 2,
+            "display_name": "Sensitivity",
+            "units": ""
+        },
+        "SoftwareVersions": {
+            "description": "software version of device",
+            "display_level": 1,
+            "display_name": "SoftwareVersions",
+            "units": ""
+        },
+        "kVp": {
+            "constraint_minlowhighmax": [
+                105.0,
+                105.0,
+                105.0,
+                105.0
+            ],
+            "description": "tube voltage",
+            "display_level": 2,
+            "display_name": "kVp",
+            "units": "kV"
+        },
+        "lowCNR_0": {
+            "constraint_minlowhighmax": [
+                1.15,
+                1.15,
+                3.0,
+                3.0
+            ],
+            "description": "low contrast to noise",
+            "display_level": 2,
+            "display_name": "lowCNR",
+            "units": ""
+        },
+        "normi13": {
+            "description": "overview of analysis element",
+            "display_level": 2,
+            "display_name": "overview",
+            "units": ""
+        },
+        "xray[E]cm": {
+            "constraint_minlowhighmax": [
+                10.75,
+                11.0,
+                13.0,
+                13.25
+            ],
+            "description": "x-ray boundary east side",
+            "display_level": 2,
+            "display_name": "xray[E]",
+            "units": "cm"
+        },
+        "xray[N]cm": {
+            "constraint_minlowhighmax": [
+                10.75,
+                11.0,
+                13.0,
+                13.25
+            ],
+            "description": "x-ray boundary north side",
+            "display_level": 2,
+            "display_name": "xray[N]",
+            "units": "cm"
+        },
+        "xray[S]cm": {
+            "constraint_minlowhighmax": [
+                10.75,
+                11.0,
+                13.0,
+                13.25
+            ],
+            "description": "x-ray boundary south side",
+            "display_level": 2,
+            "display_name": "xray[S]",
+            "units": "cm"
+        },
+        "xray[W]cm": {
+            "constraint_minlowhighmax": [
+                10.75,
+                11.0,
+                13.0,
+                13.25
+            ],
+            "description": "x-ray boundary west side",
+            "display_level": 2,
+            "display_name": "xray[W]",
+            "units": "cm"
+        }
+    }
+}
