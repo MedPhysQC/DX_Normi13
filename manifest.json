@@ -15,7 +15,7 @@
             "pydicom",
             "scipy",
             "matplotlib",
-            "scikit-image",
+            "scikit-image"
         ]
     }
 }
