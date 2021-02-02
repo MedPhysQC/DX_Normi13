@@ -315,7 +315,7 @@ def _FindPhantomBox(cs, vertical=None, assumegood=False, sigma=None, sepmm=10):
     West: will not be able to find because of line pairs element
 
     if vertical is given:
-    Look at those y coordinates, and travel only form center to left and to right;
+    Look at those y coordinates, and travel only from center to left and to right;
     this should be used in case the line finding fails for small detectors.
     """
     error = True
@@ -361,6 +361,7 @@ def _FindPhantomBox(cs, vertical=None, assumegood=False, sigma=None, sepmm=10):
                 rois.append([midx,midx+blockheight, midy,heightpx-1-seppx]) # South
                 rois.append([midx,seppx,  midy+v_px,midy+v_px+blockheight]) # West
                 
+                
                 for factor in [2., 2.5, 3.]:
                     lines = []
                     edgepos = []
@@ -368,8 +369,9 @@ def _FindPhantomBox(cs, vertical=None, assumegood=False, sigma=None, sepmm=10):
                         stepx = 1 if r[1]>r[0] else -1
                         stepy = 1 if r[3]>r[2] else -1
                         smallimage = cs.pixeldataIn[r[0]:r[1]:stepx,r[2]:r[3]:stepy]
+                            
                         if not sigma is None:
-                            smallimage = scind.gaussian_filter(smallimage, sigma=sigma)
+                            smallimage = scind.gaussian_filter(1.*smallimage, sigma=sigma)
                         
                         ep, line, threshold = _findDropLine(smallimage, hlinepx, removeTrend=True, factor=factor)
                         if ep == -1:
@@ -387,6 +389,7 @@ def _FindPhantomBox(cs, vertical=None, assumegood=False, sigma=None, sepmm=10):
             if cs.verbose:
                 cs.hasmadeplots = True
                 plt.figure()
+                plt.title("_FindPhantomBox: vhei={}".format(vhei))
                 for line,lab in zip(lines,['N','E','S','W']):
                     plt.plot(line,label=lab)
 

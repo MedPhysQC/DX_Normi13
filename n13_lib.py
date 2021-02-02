@@ -833,9 +833,16 @@ class XRayQC:
         try:
             labvals.append( {'name':'HoughAvgSNR', 'value':cs.hough_avg_snr, 'level':2} )
             labvals.append( {'name':'HoughRThresholdHi', 'value':cs.hough_rthreshold_hi, 'level':2} )
+            labvals.append( {'name':'HoughPreBlur', 'value':cs.hough_preblur, 'level':2} )
         except:
             pass
 
+        testDR = False
+        if testDR:
+            # dump all Cu values
+            for _mm, _val in zip(cs.cuwedge.step_mmcu, cs.cuwedge.step_mean):
+                labvals.append( {'name':'Cu_{:.2f}'.format(_mm),'value':_val, 'quantity':'Cu','level':1} )
+            
         return labvals
 
     def QC(self, cs):
@@ -870,18 +877,12 @@ class XRayQC:
                     error = self.CropNormi13(cs)
                     if error:
                         msg += 'Crop '
-        
+                    
                 # 1.2 geometry: orientation
                 if not error:
                     error = self.FixPhantomOrientation(cs)
                     if error:
                         msg += 'Orientation '
-                import matplotlib.pylab as plt
-                if 0:
-                    plt.figure()
-                    plt.title("Fix")
-                    plt.imshow(cs.pixeldataIn.T)
-                    plt.show()
 
                 # 1.3 geometry: phantom coordinates
                 if not error:
@@ -889,7 +890,7 @@ class XRayQC:
                     if error:
                         msg += 'Grid '
                         error = False
-        
+
                 # 1.4: travel straight along NS and find edge of x-ray; similar for EW
                 if not error:
                     error = self.XRayField(cs)
@@ -901,7 +902,7 @@ class XRayQC:
                     error = self.CuWedge(cs)
                     if error:
                         msg += 'CuWedge '
-                        
+
                 if error:
                     raise ValueError("Fail! {}:{}".format(msg, cs.forceRoom.outvalue))
                 break 

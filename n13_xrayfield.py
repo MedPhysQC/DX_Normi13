@@ -8,14 +8,14 @@ XRayField
   cs = n13hough_lib.XRayStruct
 
 Changelog:
-  20201112: first stable version
+  20210112: first stable version
 
 """
-__version__ = 20201112
+__version__ = 20210112
 
 import numpy as np
 import scipy.ndimage as scind
-import matplotlib.pylab as plt
+import matplotlib.pyplot as plt
 try:
     # wad2.0 runs each module stand alone
     import n13_cropping as crop

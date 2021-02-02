@@ -34,16 +34,17 @@ FindPhantomGridHough
   4. Take the inner linepairs for both directions to define the crossings as corners of the inner square.
 
 Changelog:
-  20201112: first stable version
+  20210112: first stable version
 """
-__version__ = 20201112
+__version__ = 20210112
 
 import numpy as np
 from skimage.transform import hough_line, hough_line_peaks
 from skimage.filters import sato, frangi, meijering
 from skimage import exposure
 import scipy.ndimage as scind
-import matplotlib.pylab as plt
+import matplotlib.pyplot as plt
+    
 import json
 try:
     # wad2.0 runs each module stand alone
@@ -246,6 +247,7 @@ def hough_preprocessing(cs, options):
         threshold_hi = bins_center[i_zero]+frac_hi*(avg-bins_center[i_zero])
 
     cs.hough_rthreshold_hi = threshold_hi/avg
+    cs.hough_preblur = options['pre_blur']
 
     ## LOG
     if options['hough_log']:
@@ -256,6 +258,7 @@ def hough_preprocessing(cs, options):
             hough_log['im_std'] = float(im_sd)
         hough_log['snr_avg'] = float(avg)
         hough_log['frac_hi'] = float(frac_hi)
+        hough_log['pre_blur'] = float(options['pre_blur'])
         hough_log['threshold_hi'] = float(threshold_hi)
         hough_log['rthreshold_hi'] = float(threshold_hi/avg)
         try:
@@ -421,7 +424,7 @@ def _debug_show_detections(lines, norm, data, edges, avg):
     if not norm is None:
         plt.figure()
         plt.title("0. norm")
-        plt.imshow(norm, cmap="gray", vmax=avg)
+        plt.imshow(norm, cmap="gray", vmax=avg, origin="lower")
         for lines_yx in lines:
             for (y1,x1),(y2,x2) in lines_yx:
                 plt.plot([x1,x2], [y1,y2], '-r')
@@ -432,12 +435,12 @@ def _debug_show_detections(lines, norm, data, edges, avg):
     if not data is None:
         plt.figure()
         plt.title("1. data")
-        plt.imshow(data.astype(np.uint8))
+        plt.imshow(data.astype(np.uint8), origin="lower")
 
     if not edges is None:
         plt.figure()
         plt.title("2. edges")
-        plt.imshow(edges)
+        plt.imshow(edges, origin="lower")
         for lines_yx in lines:
             for (y1,x1),(y2,x2) in lines_yx:
                 plt.plot([x1,x2], [y1,y2], '-r')
@@ -847,7 +850,7 @@ def FindPhantomGridHough(cs, hough_options):
     if hough_options['verbose']:
         plt.figure()
         plt.title("Image")
-        plt.imshow(cs.pixeldataIn)
+        plt.imshow(cs.pixeldataIn, origin="lower")
         plt.plot([x for y,x in corners], [y for y,x in corners], 'o')
         plt.show()
 
