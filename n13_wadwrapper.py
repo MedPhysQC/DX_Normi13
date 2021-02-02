@@ -20,6 +20,7 @@
 # 
 #
 # Changelog:
+#   20210202: accept multi-frame single files for uniformity
 #   20210127: first stable with hough line detector; use old/legacy method if hough_options are NOT defined, if {} then use Hough with defaults
 #   20200729: attempt to fix phantom_orientation for small detectors
 #   20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
@@ -43,7 +44,7 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20210127'
+__version__ = '20210202'
 __author__ = 'aschilham'
 GUIMODE = True
 GUIMODE = False
@@ -406,6 +407,13 @@ def qc_uniformity_series(data, results, action):
         nim = int(len(pixeldataIn)/2.)
         dcmInfile   = dcmInfile._datasets[nim]
         pixeldataIn = np.average(pixeldataIn, axis=0)
+        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(np.int) # do not change type
+        dicomMode = wadwrapper_lib.stMode2D
+    elif len(pixeldataIn.shape) == 3: # multi slice single frame
+        nim = int(len(pixeldataIn)/2.)
+        dcmInfile   = dcmInfile#._datasets[nim]
+        #pixeldataIn = np.average(pixeldataIn, axis=0)
+        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(np.int) # do not change type
         dicomMode = wadwrapper_lib.stMode2D
 
     ## 3. Build and populate qcstructure
@@ -427,16 +435,17 @@ def qc_uniformity_series(data, results, action):
 
     ## First Build artefact picture thumbnail
     label = 'artefacts'
-    filename = '%s%s.jpg'%(label,idname) # Use jpg if a thumbnail is desired
+    outpath = results._out_path.split(".json")[0]
+    filename = '{}_{}{}.jpg'.format(outpath, label, idname) # Use jpg if a thumbnail is desired
     qclib.saveAnnotatedImage(cs, filename, 'artefacts')
-    varname = '%s%s'%(label,idname)
+    varname = '{}{}'.format(label,idname)
     results.addObject(varname, filename)
 
     ## also add uniformity thumbnail
     label = 'uniformity'
-    filename = '%s%s.jpg'%(label,idname) # Use jpg if a thumbnail is desired
+    filename = '{}_{}{}.jpg'.format(outpath, label, idname) # Use jpg if a thumbnail is desired
     qclib.saveAnnotatedImage(cs, filename, 'uniformity')
-    varname = '%s%s'%(label,idname)
+    varname = '{}{}'.format(label,idname)
     results.addObject(varname, filename)
 
     labvals = qclib.ReportEntries(cs)

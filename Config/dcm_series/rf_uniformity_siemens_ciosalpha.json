@@ -14,11 +14,10 @@
         "uniformity_series": {
             "filters": {},
             "params": {
-                "artefactborderpx": "45;45;35;35",
+                "artefactborderpx": "5;5;5;5",
                 "auto_suffix": false,
                 "pidmm": 36,
                 "roomname": "AZUCiosAlpha",
-                "skip_cropping": true,
                 "use_mustbeinverted": false,
                 "use_mustbemirrored": true
             }
@@ -70,7 +69,6 @@
                 "auto_suffix": "add suffix based on detector name or table/wall distinction to results",
                 "pidmm": "distance between phantom and image detector",
                 "roomname": "your identifier of this room",
-                "skip_cropping": "do not attempt to crop image.",
                 "use_mustbeinverted": "override determination if inversion of pixel values is needed.",
                 "use_mustbemirrored": "force mirroring of image before analysis."
             }
