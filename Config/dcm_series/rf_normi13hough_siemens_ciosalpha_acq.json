@@ -8,7 +8,7 @@
             "filters": {},
             "params": {
                 "auto_suffix": false,
-                "roomname": "F7"
+                "roomname": "AZUCiosAlpha"
             }
         },
         "qc_series": {
@@ -20,14 +20,13 @@
                     "frac_hi": 0.0,
                     "hough_mode": "meijering",
                     "min_len_mm": 90.0,
-                    "pre_blur": 1.0
+                    "pre_blur": 1.5
                 },
                 "linepair_type": "RXT02",
-                "roomname": "F7",
-                "skip_cropping": true,
-                "use_mustbeinverted": true,
-                "use_mustbemirrored": false,
-                "use_pixmm": 0.315,
+                "pidmm": 36,
+                "roomname": "AZUCiosAlpha",
+                "use_mustbeinverted": false,
+                "use_mustbemirrored": true,
                 "xymm0.6": "-83.0;-25.0",
                 "xymm1.0": "-99.0;-8.0"
             }
@@ -37,7 +36,7 @@
     "comments": {
         "author": "Arnold Schilham, UMCU",
         "creator": "generate_config_json.py version 20180912",
-        "description": "DX/Normi13Hough for Philips Omni Diagnost Eleva",
+        "description": "DX/Normi13Hough for Siemens Cios Alpha",
         "usage": [
             "params that must be set for both actions below:",
             "  \"roomname\": \"Bucky1\" # any identifier",
@@ -74,7 +73,7 @@
             "optionally set the following parameters:",
             "  \"auto_suffix\": true or false [false]  # to set or suppress auto_suffix generation"
         ],
-        "version": "20210127"
+        "version": "20210202"
     },
     "info": {
         "acqdatetime": {
@@ -97,11 +96,10 @@
                     "pre_blur": "before normalization reduce noise by gaussian blurring with this sigma (px)"
                 },
                 "linepair_type": "must be RXT02 or typ38",
+                "pidmm": "distance between phantom and image detector",
                 "roomname": "your identifier of this room",
-                "skip_cropping": "do not attempt to crop image.",
                 "use_mustbeinverted": "override determination if inversion of pixel values is needed.",
                 "use_mustbemirrored": "force mirroring of image before analysis.",
-                "use_pixmm": "override determination of pixel size in mm (on phantom)",
                 "xymm0.6": "position of the dot in 0.6",
                 "xymm1.0": "position of the dot in 1.0"
             }

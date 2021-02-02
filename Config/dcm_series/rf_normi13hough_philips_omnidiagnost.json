@@ -20,7 +20,7 @@
                     "frac_hi": 0.0,
                     "hough_mode": "meijering",
                     "min_len_mm": 90.0,
-                    "pre_blur": 0.66
+                    "pre_blur": 1.0
                 },
                 "linepair_type": "RXT02",
                 "roomname": "F7",
