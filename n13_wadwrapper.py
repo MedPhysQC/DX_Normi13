@@ -20,6 +20,8 @@
 # 
 #
 # Changelog:
+#   20230906: remove deprecated warning; Pillow 10.0.0
+#   20230228: Added option to choose artefact detection method
 #   20210202: accept multi-frame single files for uniformity
 #   20210127: first stable with hough line detector; use old/legacy method if hough_options are NOT defined, if {} then use Hough with defaults
 #   20200729: attempt to fix phantom_orientation for small detectors
@@ -44,17 +46,24 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20210202'
+__version__ = '20230906'
 __author__ = 'aschilham'
 GUIMODE = True
 GUIMODE = False
 
 import os
 if not 'MPLCONFIGDIR' in os.environ:
-    import pkg_resources
+    try:
+        # new method
+        from importlib.metadata import version as pkg_version
+    except:
+        # deprecated method
+        import pkg_resources
+        def pkg_version(what):
+            return pkg_resources.get_distribution(what).version
     try:
         #only for matplotlib < 3 should we use the tmp work around, but it should be applied before importing matplotlib
-        matplotlib_version = [int(v) for v in pkg_resources.get_distribution("matplotlib").version.split('.')]
+        matplotlib_version = [int(v) for v in pkg_version("matplotlib").split('.')]
         if matplotlib_version[0]<3:
             os.environ['MPLCONFIGDIR'] = "/tmp/.matplotlib" # if this folder already exists it must be accessible by the owner of WAD_Processor 
     except:
@@ -424,7 +433,7 @@ def qc_uniformity_series(data, results, action):
     cs.verbose = False # do not produce detailed logging
 
     ## 4. Run tests
-    error,msg = qclib.QCUnif(cs)
+    error,msg = qclib.QCUnif(cs, params.get('method', "structure"))
 
     ## 5. Build xml output
     ## Struct now contains all the results and we can write these to the WAD IQ database
@@ -567,7 +576,9 @@ def main(hough_override={}):
     #results.limits["minlowhighmax"]["mydynamicresult"] = [1,2,3,4]
 
     results.write()
-    
+    if GUIMODE:
+        matplotlib.pyplot.show()
+
 if __name__ == "__main__":
     # main in separate function to be called by n13hough_tester
     main()

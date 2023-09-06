@@ -18,6 +18,8 @@ Note: comparison will be against lit.stTable, if not matched (eg. overwritten by
 
 TODO:
 Changelog:
+    20230906: fix for Pillow 10.0.0
+    20230228: Added option to choose artefact detection method
     20210104: Fix: redo without cropping always failed.
     20200729: attempt to fix phantom_orientation for small detectors
     20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
@@ -50,7 +52,7 @@ Changelog:
     20160202: added uniformity
     20151109: start of new module, based on QCXRay_lib of Bucky_PEHAMED_Wellhofer of 20151029
 """
-__version__ = '20210104'
+__version__ = '20230906'
 __author__ = 'aschilham'
 
 try:
@@ -512,7 +514,11 @@ class XRayQC:
         imsi = im.size
         if max(imsi)>2048:
             ratio = 2048./max(imsi)
-            im = im.resize( (int(imsi[0]*ratio+.5), int(imsi[1]*ratio+.5)),Image.ANTIALIAS)
+            try:
+                im = im.resize( (int(imsi[0]*ratio+.5), int(imsi[1]*ratio+.5)),Image.ANTIALIAS)
+            except AttributeError as e:
+                # PIL 10.0.0 deprecates ANTIALIAS
+                im = im.resize( (int(imsi[0]*ratio+.5), int(imsi[1]*ratio+.5)),Image.Resampling.LANCZOS)
         im.save(fname)
 
     #------------------- 
@@ -927,10 +933,13 @@ class XRayQC:
         return error,msg
 
     # -------------------
-    def Uniformity(self,cs):
+    def Uniformity(self,cs, method="structure"):
         # run external QCUniformity
-        usestructure = True
-
+        #method="structure"
+        #method="localsnr"
+        #method="localnorm"
+        #method="variance"
+        
         cs.unif = unif_lib.UnifStruct(cs.dcmInfile, cs.pixeldataIn)
         cs.unif.pixmm = cs.forceRoom.pixmm
         
@@ -952,10 +961,14 @@ class XRayQC:
             cs.unif_crop_inoutoverin = 1.
 
 
-        if usestructure:
-            qc_unif.artefactDetectorParameters(UseStructure=True, bkscale=25, fgscale=5.0, threshold=3000)
-        else:
-            qc_unif.artefactDetectorParameters(UseStructure=False, bkscale=25, fgscale=5.0, threshold=15)
+        if method == "structure": #default
+            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=3000)
+        elif method == "localsnr": # second choice
+            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=15)
+        elif method == "localnorm": # not used
+            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=15)
+        elif method == "variance": # new
+            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=15)
 
         error = qc_unif.Uniformity(cs.unif, cs.forceRoom.artefactborderpx, cs.forceRoom.artefactborder_is_circle) # DOES NOT HAVE TO BE THE SAME BORDERPIX
 
@@ -970,7 +983,7 @@ class XRayQC:
 
         return error,''
 
-    def QCUnif(self, cs):
+    def QCUnif(self, cs, method="structure"):
         """
         Separate uniformity in one step!
         """
@@ -982,7 +995,7 @@ class XRayQC:
             label = cs.dcmInfile.get('BodyPartExamined', None)
             
         print('[QCUnif]', label)
-        error, msg = self.Uniformity(cs)
+        error, msg = self.Uniformity(cs, method)
 
         if error:
             msg += "Uniformity (try)) "

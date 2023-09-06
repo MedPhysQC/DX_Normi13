@@ -3,6 +3,8 @@
 Warning: THIS MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
 
 Changelog:
+    20230906: fix for Pillow 10.0.0
+    20230228: Added option to choose artefact detection method
     20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
     20171116: fix scipy version 1.0
     20170310: add override params for pixmm
@@ -15,7 +17,7 @@ Changelog:
     20160202: Finished uniformity
     20160201: Split Uniformity/Artefact detection off from QCMammo to enable recycling; starting from v20150522
 """
-__version__ = '20200508'
+__version__ = '20230906'
 __author__ = 'aschilham'
 
 LOCALIMPORT = False
@@ -121,12 +123,12 @@ class Uniformity_QC:
         self.qcversion = __version__
         self.artefactDetectorParameters() # default for non-L50 mammo
 
-    def artefactDetectorParameters(self, UseStructure=False,
+    def artefactDetectorParameters(self, method="structure",
                                    bkscale=25, # dscale
                                    fgscale=5.0, # iscale
                                    threshold=15,
                                    ):
-        self.artdet_UseStructure = UseStructure # use structure detector or LocalSNR
+        self.artdet_method = method # use structure detector or LocalSNR
         # for Hologic Selenia there is a part of the image (12 px) that should be ignored
         self.artdet_bkscale = bkscale # if given, then subtract Gaussian(bkscale) from filtered image
         self.artdet_fgscale = fgscale # Gaussian scale of features
@@ -401,7 +403,7 @@ class Uniformity_QC:
 
         cs.art_crop = [field_min_x_px,field_max_x_px, field_min_y_px,field_max_y_px]
 
-        pdCopy = np.array(cs.pixeldataIn[field_min_x_px:field_max_x_px,field_min_y_px:field_max_y_px], dtype=np.float)
+        pdCopy = np.array(cs.pixeldataIn[field_min_x_px:field_max_x_px,field_min_y_px:field_max_y_px], dtype=float)
         # exclude outside max circle if so defined
         if border_is_circle:
             mw, mh = np.shape(pdCopy) # width/height in pixels
@@ -419,7 +421,9 @@ class Uniformity_QC:
             dist = np.sqrt( ((X-cxy[0])/rxy[0])**2. + ((Y-cxy[1])/rxy[1])**2.)
             circle_mask = np.transpose(dist<1.)
 
-        if self.artdet_UseStructure: # use structure detector
+        if self.artdet_method == "variance":
+            cs.art_image = VarianceImage(pdCopy, sigma=self.artdet_fgscale, bksigma=self.artdet_bkscale,uiobject=uiobject) # remove background trend
+        elif self.artdet_method == "structure": # use structure detector
             # Apart from spots, we also see lines appearing as large artefacts.
             # To detect the later, the slower "structure" is needed
             have_big_mem = True
@@ -428,9 +432,14 @@ class Uniformity_QC:
             else:
                 cs.art_image = SplitMergeStructureDetector(pdCopy,bksigma=self.artdet_bkscale,uiobject=uiobject) # remove background trend
 
-        else:
+        elif self.artdet_method == "localsnr":
             # We see only spots, so we do not need the slower "structure"
             cs.art_image = LocalSNR(pdCopy,sigma=self.artdet_fgscale,bksigma=self.artdet_bkscale,uiobject=uiobject)# remove background trend
+        elif self.artdet_method == "localnorm":
+            # We see only spots, so we do not need the slower "structure"
+            cs.art_image = LocalNorm(pdCopy,sigma=self.artdet_fgscale,bksigma=self.artdet_bkscale,uiobject=uiobject)# remove background trend
+        else:
+            raise ValueError("Unknown artifact detector method '{}'".format(self.artdet_method))
 
         """
         find clusters of pixels BELOW a certain threshold
@@ -456,7 +465,7 @@ class Uniformity_QC:
         smMean = np.mean(smallIm)
         smStDev = np.std(smallIm)
         #print('art',smMean, smStDev, (self.artdet_threshold-smMean)/smStDev)
-        if self.artdet_UseStructure:
+        if self.artdet_method == "structure":
             self.artdet_threshold = smMean+10*smStDev
             #print('art', self.artdet_threshold)
             if not np.abs(cs.art_image).max()>self.artdet_threshold: # > above for Structure!
@@ -466,7 +475,18 @@ class Uniformity_QC:
                 return error
             hist,bins = np.histogram(cs.art_image[::3, ::3], bins=[min(cs.art_image.min(),-self.artdet_threshold),-self.artdet_threshold,self.artdet_threshold,max(cs.art_image.max(),self.artdet_threshold)],density=False)
             frac = 1.*(hist[0]+hist[-1])/( (cwid/3)*(chei/3) ) # above for Structure!
-        else:
+        elif self.artdet_method in ["localsnr", "localnorm"]:
+            self.artdet_threshold = smMean+5*smStDev
+            #print('art', self.artdet_threshold)
+            if not np.abs(cs.art_image).max()>self.artdet_threshold: #<
+                error = False
+                if uiobject:
+                    uiobject.pbar.label.setText("Finished.")
+                return error
+            hist,bins = np.histogram(cs.art_image[::3, ::3], bins=[min(cs.art_image.min(),-self.artdet_threshold),-self.artdet_threshold,self.artdet_threshold,max(cs.art_image.max(),self.artdet_threshold)],density=False)
+            frac = 1.*(hist[0]+hist[-1])/( (cwid/3)*(chei/3) )
+
+        elif self.artdet_method == "variance":
             self.artdet_threshold = smMean+5*smStDev
             #print('art', self.artdet_threshold)
             if not np.abs(cs.art_image).max()>self.artdet_threshold: #<
@@ -493,7 +513,7 @@ class Uniformity_QC:
         cca = wadwrapper_lib.connectedComponents()
 
         # extra mapout
-        if self.artdet_UseStructure:
+        if self.artdet_method == "structure":
             if border_is_circle: # exclude outside max circle if so defined
                 cs.art_image[~circle_mask] = self.artdet_threshold-1e-3
             else:
@@ -506,7 +526,33 @@ class Uniformity_QC:
                 if borderpx[3]>0:
                     cs.art_image[:,-borderpx[3]:]    = self.artdet_threshold-1e-3
             cca_in = np.abs(cs.art_image)>self.artdet_threshold
-        else:
+        elif self.artdet_method in ["localsnr"]:
+            if border_is_circle: # exclude outside max circle if so defined
+                cs.art_image[~circle_mask] = -self.artdet_threshold+1e-3
+            else:
+                if borderpx[0]>0:
+                    cs.art_image[:(borderpx[0]+1),:] = -self.artdet_threshold+1e-3
+                if borderpx[1]>0:
+                    cs.art_image[-borderpx[1]:,:]    = -self.artdet_threshold+1e-3
+                if borderpx[2]>0:
+                    cs.art_image[:,:(borderpx[2]+1)] = -self.artdet_threshold+1e-3
+                if borderpx[3]>0:
+                    cs.art_image[:,-borderpx[3]:]    = -self.artdet_threshold+1e-3
+            cca_in = np.abs(cs.art_image)>self.artdet_threshold
+        elif self.artdet_method in ["localnorm"]:
+            if border_is_circle: # exclude outside max circle if so defined
+                cs.art_image[~circle_mask] = -self.artdet_threshold+1e-3
+            else:
+                if borderpx[0]>0:
+                    cs.art_image[:(borderpx[0]+1),:] = -self.artdet_threshold+1e-3
+                if borderpx[1]>0:
+                    cs.art_image[-borderpx[1]:,:]    = -self.artdet_threshold+1e-3
+                if borderpx[2]>0:
+                    cs.art_image[:,:(borderpx[2]+1)] = -self.artdet_threshold+1e-3
+                if borderpx[3]>0:
+                    cs.art_image[:,-borderpx[3]:]    = -self.artdet_threshold+1e-3
+            cca_in = np.abs(cs.art_image)>self.artdet_threshold
+        elif self.artdet_method == "variance":
             if border_is_circle: # exclude outside max circle if so defined
                 cs.art_image[~circle_mask] = -self.artdet_threshold+1e-3
             else:
@@ -587,7 +633,11 @@ class Uniformity_QC:
         imsi = im.size
         if max(imsi)>2048:
             ratio = 2048./max(imsi)
-            im = im.resize( (int(imsi[0]*ratio+.5), int(imsi[1]*ratio+.5)),Image.ANTIALIAS)
+            try:
+                im = im.resize( (int(imsi[0]*ratio+.5), int(imsi[1]*ratio+.5)),Image.ANTIALIAS)
+            except AttributeError as e:
+                # PIL 10.0.0 deprecates ANTIALIAS
+                im = im.resize( (int(imsi[0]*ratio+.5), int(imsi[1]*ratio+.5)),Image.Resampling.LANCZOS)
         im.save(fname)
 
     #----- NEW-----
@@ -1027,7 +1077,7 @@ def LocalSNR(pSrc, sigma,bksigma = None, uiobject=None, sd_offset=0.):
     Can be approximated as [ Gauss{I,sigma}] / sqrt[ Gauss{I-Gauss{I,sigma},sigma}^2]
     """
     if uiobject:
-        uiobject.pbar.startProgress(3,"Calculating LocSNR")
+        uiobject.pbar.startProgress(3,"Calculating LocalSNR")
     blurIm = scind.gaussian_filter(pSrc,sigma,order=[0,0])
     if uiobject:
         print("[LocalSNR] 1/4 blur'd")
@@ -1083,4 +1133,28 @@ def LocalNorm(pSrc, sigma,bksigma = None, uiobject=None):
         uiobject.pbar.endProgress()
 
     return locnormIm
+
+def VarianceImage(pSrc, sigma, bksigma = None, uiobject=None):
+    """
+    Variance: stdev^2(x,y)
+    Can be approximated as Gauss{I-Gauss{I,sigma},sigma}^2
+    """
+    if uiobject:
+        uiobject.pbar.startProgress(3, "Calculating VarianceImage")
+    blurIm = scind.gaussian_filter(pSrc,sigma,order=[0,0])
+    if uiobject:
+        print("[VarianceImage] 1/3 blur'd")
+    devIm = pSrc-blurIm
+    if uiobject:
+        uiobject.pbar.doProgress("dev'd")
+        print("[VarianceImage] 2/3 dev'd")
+    varIm  = scind.gaussian_filter(devIm**2,sigma,order=[0,0])
+    #varIm[varIm<1.e-3]=0. # prevent div by zero
+    if uiobject:
+        uiobject.pbar.doProgress("var'd")
+        print("[VarianceImage] 3/3 var'd")
+    if uiobject:
+        uiobject.pbar.endProgress()
+
+    return devIm
 
