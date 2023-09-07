@@ -20,6 +20,7 @@
 # 
 #
 # Changelog:
+#   20230907: remove deprecated np.int, np.float, np.bool
 #   20230906: remove deprecated warning; Pillow 10.0.0
 #   20230228: Added option to choose artefact detection method
 #   20210202: accept multi-frame single files for uniformity
@@ -46,7 +47,7 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20230906'
+__version__ = '20230907'
 __author__ = 'aschilham'
 GUIMODE = True
 GUIMODE = False
@@ -319,13 +320,13 @@ def qc_series(data, results, action, hough_override={}):
         nim = int(len(pixeldataIn)/2.)
         dcmInfile   = dcmInfile._datasets[nim]
         #pixeldataIn = np.average(pixeldataIn, axis=0)
-        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(np.int) # do not change type
+        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(int) # do not change type
         dicomMode = wadwrapper_lib.stMode2D
     elif len(pixeldataIn.shape) == 3: # multi slice single frame
         nim = int(len(pixeldataIn)/2.)
         dcmInfile   = dcmInfile#._datasets[nim]
         #pixeldataIn = np.average(pixeldataIn, axis=0)
-        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(np.int) # do not change type
+        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(int) # do not change type
         dicomMode = wadwrapper_lib.stMode2D
 
     ## 3. Build and populate qcstructure
@@ -416,13 +417,13 @@ def qc_uniformity_series(data, results, action):
         nim = int(len(pixeldataIn)/2.)
         dcmInfile   = dcmInfile._datasets[nim]
         pixeldataIn = np.average(pixeldataIn, axis=0)
-        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(np.int) # do not change type
+        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(int) # do not change type
         dicomMode = wadwrapper_lib.stMode2D
     elif len(pixeldataIn.shape) == 3: # multi slice single frame
         nim = int(len(pixeldataIn)/2.)
         dcmInfile   = dcmInfile#._datasets[nim]
         #pixeldataIn = np.average(pixeldataIn, axis=0)
-        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(np.int) # do not change type
+        pixeldataIn = (np.average(pixeldataIn, axis=0)+.5).astype(int) # do not change type
         dicomMode = wadwrapper_lib.stMode2D
 
     ## 3. Build and populate qcstructure

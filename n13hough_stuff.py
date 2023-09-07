@@ -34,9 +34,10 @@ FindPhantomGridHough
   4. Take the inner linepairs for both directions to define the crossings as corners of the inner square.
 
 Changelog:
+  20230907: remove deprecated np.int, np.float, np.bool
   20210112: first stable version
 """
-__version__ = 20210112
+__version__ = 20230907
 
 import numpy as np
 from skimage.transform import hough_line, hough_line_peaks
@@ -153,7 +154,7 @@ def hough_preprocessing(cs, options):
         print("NOISEA", im_avg, im_sd, im_max, im_min, options['pre_blur'], frac_hi)
 
     # 2. a bit of noise reduction
-    image = scind.gaussian_filter(image.astype(np.float), sigma=options['pre_blur'])
+    image = scind.gaussian_filter(image.astype(float), sigma=options['pre_blur'])
     if options['verbose']:
         im_avg = image[int(dimy/2)-avg_rad:int(dimy/2)+avg_rad, int(dimx/2)-avg_rad:int(dimx/2)+avg_rad].mean()
         im_sd = image[int(dimy/2)-avg_rad:int(dimy/2)+avg_rad, int(dimx/2)-avg_rad:int(dimx/2)+avg_rad].std()
@@ -271,7 +272,7 @@ def hough_preprocessing(cs, options):
 
 
     # 5. binarize image of selected SNR
-    data = np.ones_like(image, dtype=np.bool)
+    data = np.ones_like(image, dtype=bool)
     data[image > threshold_hi] = 0
     data[image < threshold_lo] = 0
 
@@ -654,7 +655,7 @@ def _line_best_overlap(edges_image, left_yx, right_yx, tops_yx, side, diffpx, ho
     dimyx = edges_image.shape
     
     if show_extensions:
-        edges2 = 1.*edges_image.astype(np.float)
+        edges2 = 1.*edges_image.astype(float)
         
     hits = []
     for i,top in enumerate(tops_yx):

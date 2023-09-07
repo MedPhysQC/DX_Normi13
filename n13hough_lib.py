@@ -18,6 +18,7 @@ Note: comparison will be against lit.stTable, if not matched (eg. overwritten by
 
 TODO:
 Changelog:
+    20230907: remove deprecated np.int, np.float, np.bool
     20210202: added image rotation; added pre_blur as result
     20210127: merged into n13_lib.py; keep only changes
     20200729: attempt to fix phantom_orientation for small detectors
@@ -51,7 +52,7 @@ Changelog:
     20160202: added uniformity
     20151109: start of new module, based on QCXRay_lib of Bucky_PEHAMED_Wellhofer of 20151029
 """
-__version__ = '20210202'
+__version__ = '20230907'
 __author__ = 'aschilham'
 
 import numpy as np
@@ -218,7 +219,7 @@ class XRayQC(Lib.XRayQC):
             print("Upscaling from {} to {} bit for Hough only".format(num_bits, max_bits))
             original_data = copy.deepcopy(cs.pixeldataIn)
             original_max = cs.get_max_pixel_value()
-            cs.pixeldataIn = cs.pixeldataIn.astype(np.int) << (max_bits-num_bits)
+            cs.pixeldataIn = cs.pixeldataIn.astype(int) << (max_bits-num_bits)
             cs.max_pixel_value = int(cs.get_max_pixel_value())<< (max_bits-num_bits)
 
 
