@@ -18,6 +18,8 @@ Note: comparison will be against lit.stTable, if not matched (eg. overwritten by
 
 TODO:
 Changelog:
+    20240627: added artdet_factor
+    20240626: added IntensifierSize
     20230906: fix for Pillow 10.0.0
     20230228: Added option to choose artefact detection method
     20210104: Fix: redo without cropping always failed.
@@ -52,7 +54,7 @@ Changelog:
     20160202: added uniformity
     20151109: start of new module, based on QCXRay_lib of Bucky_PEHAMED_Wellhofer of 20151029
 """
-__version__ = '20230906'
+__version__ = '20240626'
 __author__ = 'aschilham'
 
 try:
@@ -727,6 +729,7 @@ class XRayQC:
             {'key':"0018,1411",  'name':"ExposureIndex"},
             {'key':"0018,1412",  'name':"TargetExposureIndex"},
             {'key':"0018,1413",  'name':"DeviationIndex"},
+            {'key':"0018,1162",  'name':"IntensifierSize"},
         ]
 
         #labvals.append( {'name':'label','value':0, 'quantity':'columnname','level':'1:default, 2: detail','rank':missing or a number} )
@@ -933,7 +936,7 @@ class XRayQC:
         return error,msg
 
     # -------------------
-    def Uniformity(self,cs, method="structure"):
+    def Uniformity(self,cs, method="structure", factor=None):
         # run external QCUniformity
         #method="structure"
         #method="localsnr"
@@ -962,13 +965,21 @@ class XRayQC:
 
 
         if method == "structure": #default
-            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=3000)
+            if factor is None:
+                factor = 10
+            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=3000, factor=factor)
         elif method == "localsnr": # second choice
-            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=15)
+            if factor is None:
+                factor = 5
+            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=15, factor=factor)
         elif method == "localnorm": # not used
-            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=15)
+            if factor is None:
+                factor = 5
+            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=15, factor=factor)
         elif method == "variance": # new
-            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=15)
+            if factor is None:
+                factor = 5
+            qc_unif.artefactDetectorParameters(method, bkscale=25, fgscale=5.0, threshold=15, factor=factor)
 
         error = qc_unif.Uniformity(cs.unif, cs.forceRoom.artefactborderpx, cs.forceRoom.artefactborder_is_circle) # DOES NOT HAVE TO BE THE SAME BORDERPIX
 
@@ -983,7 +994,7 @@ class XRayQC:
 
         return error,''
 
-    def QCUnif(self, cs, method="structure"):
+    def QCUnif(self, cs, method="structure", factor=None):
         """
         Separate uniformity in one step!
         """
@@ -995,7 +1006,7 @@ class XRayQC:
             label = cs.dcmInfile.get('BodyPartExamined', None)
             
         print('[QCUnif]', label)
-        error, msg = self.Uniformity(cs, method)
+        error, msg = self.Uniformity(cs, method, factor)
 
         if error:
             msg += "Uniformity (try)) "

@@ -20,6 +20,8 @@
 # 
 #
 # Changelog:
+#   20240627: added factor for artefact detection 
+#   20240625: catch TypeError too 
 #   20230907: remove deprecated np.int, np.float, np.bool
 #   20230906: remove deprecated warning; Pillow 10.0.0
 #   20230228: Added option to choose artefact detection method
@@ -47,7 +49,7 @@
 # ./n13_wadwrapper.py -c Config/dx_philips_wkz1_normi13.json -d TestSet/StudyNormi13 -r results_normi13.json
 from __future__ import print_function
 
-__version__ = '20230907'
+__version__ = '20240627'
 __author__ = 'aschilham'
 GUIMODE = True
 GUIMODE = False
@@ -434,7 +436,7 @@ def qc_uniformity_series(data, results, action):
     cs.verbose = False # do not produce detailed logging
 
     ## 4. Run tests
-    error,msg = qclib.QCUnif(cs, params.get('method', "structure"))
+    error,msg = qclib.QCUnif(cs, params.get('method', "structure"), params.get('factor', None))
 
     ## 5. Build xml output
     ## Struct now contains all the results and we can write these to the WAD IQ database
@@ -546,8 +548,9 @@ def header_series(data, results, action):
         if elem['name'] in floatlist:
             try:
                 dummy = float(elem['value'])
-            except ValueError:
+            except (ValueError, TypeError) as e:
                 elem['value'] = -1
+                print("Missing or invalid DICOM value for {}".format(elem['name']))
             results.addFloat(varname, float(elem['value']))
         else:
             results.addString(varname, str(elem['value'])[:min(len(str(elem['value'])),100)])

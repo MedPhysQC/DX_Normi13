@@ -3,6 +3,7 @@
 Warning: THIS MODULE EXPECTS PYQTGRAPH DATA: X AND Y ARE TRANSPOSED!
 
 Changelog:
+    20240627: introduce artdet_factor
     20230906: fix for Pillow 10.0.0
     20230228: Added option to choose artefact detection method
     20200508: dropping support for python2; dropping support for WAD-QC 1; toimage no longer exists in scipy.misc
@@ -17,7 +18,7 @@ Changelog:
     20160202: Finished uniformity
     20160201: Split Uniformity/Artefact detection off from QCMammo to enable recycling; starting from v20150522
 """
-__version__ = '20230906'
+__version__ = '20240627'
 __author__ = 'aschilham'
 
 LOCALIMPORT = False
@@ -127,12 +128,14 @@ class Uniformity_QC:
                                    bkscale=25, # dscale
                                    fgscale=5.0, # iscale
                                    threshold=15,
+                                   factor=10,
                                    ):
         self.artdet_method = method # use structure detector or LocalSNR
         # for Hologic Selenia there is a part of the image (12 px) that should be ignored
         self.artdet_bkscale = bkscale # if given, then subtract Gaussian(bkscale) from filtered image
         self.artdet_fgscale = fgscale # Gaussian scale of features
         self.artdet_threshold = threshold # threshold for artefact or not
+        self.artdet_factor = factor # multiplication factor used to detect artefacts (more that avg+factor*stdev)
 
     def RestrictROIUniformity(self, cs, borderpx=[0,0,0,0]):
         # attempt to crop to a box without over-exposed edges
@@ -456,7 +459,8 @@ class Uniformity_QC:
         chei = np.shape(cs.art_image)[1]
         clusters = []
         npix = 0
-        # check histogram
+
+        # check histogram to determine cut-off for artefact
         cs.art_clusters = []
         cs.art_borderpx = borderpx
         cwid4 = int(cwid/4)
@@ -465,8 +469,20 @@ class Uniformity_QC:
         smMean = np.mean(smallIm)
         smStDev = np.std(smallIm)
         #print('art',smMean, smStDev, (self.artdet_threshold-smMean)/smStDev)
+
+        self.artdet_threshold = smMean + self.artdet_factor*smStDev # smMean+10*smStDev
+        if not np.abs(cs.art_image).max()>self.artdet_threshold: # > above for Structure!
+            error = False
+            if uiobject:
+                uiobject.pbar.label.setText("Finished.")
+            return error
+        hist,bins = np.histogram(cs.art_image[::3, ::3], bins=[min(cs.art_image.min(),-self.artdet_threshold),-self.artdet_threshold,self.artdet_threshold,max(cs.art_image.max(),self.artdet_threshold)],density=False)
+        frac = 1.*(hist[0]+hist[-1])/( (cwid/3)*(chei/3) ) # above for Structure!
+        
+        """
+        # old way, split in 3
         if self.artdet_method == "structure":
-            self.artdet_threshold = smMean+10*smStDev
+            self.artdet_threshold = smMean + self.artdet_factor*smStDev # smMean+10*smStDev
             #print('art', self.artdet_threshold)
             if not np.abs(cs.art_image).max()>self.artdet_threshold: # > above for Structure!
                 error = False
@@ -496,7 +512,7 @@ class Uniformity_QC:
                 return error
             hist,bins = np.histogram(cs.art_image[::3, ::3], bins=[min(cs.art_image.min(),-self.artdet_threshold),-self.artdet_threshold,self.artdet_threshold,max(cs.art_image.max(),self.artdet_threshold)],density=False)
             frac = 1.*(hist[0]+hist[-1])/( (cwid/3)*(chei/3) )
-
+        """
         cs.art_threshold = self.artdet_threshold 
 
         if frac > .1:
