@@ -10,7 +10,7 @@
 # GNU General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 # This code is an analysis module for WAD-QC 2.0: a server for automated 
 # analysis of medical images for quality control.
@@ -20,6 +20,7 @@
 # 
 #
 # Changelog:
+#   20260710: added collimator for Samsung85a
 #   20240627: added factor for artefact detection 
 #   20240625: catch TypeError too 
 #   20230907: remove deprecated np.int, np.float, np.bool

@@ -18,6 +18,7 @@ Note: comparison will be against lit.stTable, if not matched (eg. overwritten by
 
 TODO:
 Changelog:
+    20260710: added collimator for Samsung85a
     20240627: added artdet_factor
     20240626: added IntensifierSize
     20230906: fix for Pillow 10.0.0
@@ -54,7 +55,7 @@ Changelog:
     20160202: added uniformity
     20151109: start of new module, based on QCXRay_lib of Bucky_PEHAMED_Wellhofer of 20151029
 """
-__version__ = '20240626'
+__version__ = '20260710'
 __author__ = 'aschilham'
 
 try:
@@ -62,6 +63,7 @@ try:
 except ImportError:
     import dicom
 import numpy as np
+import xml.etree.ElementTree as ET
 
 from PIL import Image # image from pillow is needed
 from PIL import ImageDraw # imagedraw from pillow is needed, not pil
@@ -772,6 +774,48 @@ class XRayQC:
                 continue
         
             
+        # Samsung85a has collimator stored in xml inside private tag
+        col_id = {}
+        n_empty = 0
+        col_tags = ["CollimatorLeft", "CollimatorRight", "CollimatorUp", "CollimatorDown"]
+        for i,res in enumerate(results):
+            if res['name'] in col_tags:
+                col_id[res['name']] = i
+                if res['value'] == "":
+                    n_empty += 1
+        if (len(col_id) == len(col_tags)) and (n_empty == len(col_tags)):
+            found_collimator = False
+            tag_info = (0x0033,0x1022)
+
+            extra_info = ET.fromstring(cs.dcmInfile[tag_info].value)
+            try:
+                #<CollimatorAxis>&lt;COLLIMATOR4AXIS X1="245" X2="245" Y1="291" Y2="291" ACSS="True" CollimatorWidthHeight="Manual" /&gt;</CollimatorAxis> 
+                # CollimatorAxis holds an XML-escaped <COLLIMATOR4AXIS> element as its text
+                col_axis_tag = "CollimatorAxis"
+                collimator_axis = ET.fromstring(extra_info.find(col_axis_tag).text)
+                x1 = float(collimator_axis.get('X1'))
+                x2 = float(collimator_axis.get('X2'))
+                y1 = float(collimator_axis.get('Y1'))
+                y2 = float(collimator_axis.get('Y2'))
+                found_collimator = True
+            except:
+                try:
+                    #<CollimatorSize>58.2X49</CollimatorSize> 
+                    # sizes in cm
+                    col_tag = "CollimatorSize"
+                    collimator_size = extra_info.find(col_tag).text
+                    y,x = [float(k) for k in collimator_size.split('X')]
+                    y1,y2 = (0,10*y)
+                    x1,x2 = (0,10*x)
+                    found_collimator = True
+                except:
+                    pass
+            
+            if found_collimator:
+                results[col_id["CollimatorLeft"]]['value'] = f"{x1:.1f}"
+                results[col_id["CollimatorRight"]]['value'] = f"{x2:.1f}"
+                results[col_id["CollimatorUp"]]['value'] = f"{y1:.1f}"
+                results[col_id["CollimatorDown"]]['value'] = f"{y2:.1f}"
         return results
 
     def ReportEntries(self,cs):
