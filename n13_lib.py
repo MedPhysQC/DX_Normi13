@@ -785,32 +785,37 @@ class XRayQC:
                     n_empty += 1
         if (len(col_id) == len(col_tags)) and (n_empty == len(col_tags)):
             found_collimator = False
-            tag_info = (0x0033,0x1022)
 
-            extra_info = ET.fromstring(cs.dcmInfile[tag_info].value)
             try:
-                #<CollimatorAxis>&lt;COLLIMATOR4AXIS X1="245" X2="245" Y1="291" Y2="291" ACSS="True" CollimatorWidthHeight="Manual" /&gt;</CollimatorAxis> 
-                # CollimatorAxis holds an XML-escaped <COLLIMATOR4AXIS> element as its text
-                col_axis_tag = "CollimatorAxis"
-                collimator_axis = ET.fromstring(extra_info.find(col_axis_tag).text)
-                x1 = float(collimator_axis.get('X1'))
-                x2 = float(collimator_axis.get('X2'))
-                y1 = float(collimator_axis.get('Y1'))
-                y2 = float(collimator_axis.get('Y2'))
-                found_collimator = True
-            except:
+                tag_info = (0x0033,0x1022)
+                extra_info = ET.fromstring(cs.dcmInfile[tag_info].value)
+                
                 try:
-                    #<CollimatorSize>58.2X49</CollimatorSize> 
-                    # sizes in cm
-                    col_tag = "CollimatorSize"
-                    collimator_size = extra_info.find(col_tag).text
-                    y,x = [float(k) for k in collimator_size.split('X')]
-                    y1,y2 = (0,10*y)
-                    x1,x2 = (0,10*x)
+                    #<CollimatorAxis>&lt;COLLIMATOR4AXIS X1="245" X2="245" Y1="291" Y2="291" ACSS="True" CollimatorWidthHeight="Manual" /&gt;</CollimatorAxis> 
+                    # CollimatorAxis holds an XML-escaped <COLLIMATOR4AXIS> element as its text
+                    col_axis_tag = "CollimatorAxis"
+                    collimator_axis = ET.fromstring(extra_info.find(col_axis_tag).text)
+                    x1 = float(collimator_axis.get('X1'))
+                    x2 = float(collimator_axis.get('X2'))
+                    y1 = float(collimator_axis.get('Y1'))
+                    y2 = float(collimator_axis.get('Y2'))
                     found_collimator = True
-                except:
-                    pass
-            
+                except Exception:
+                    try:
+                        #<CollimatorSize>58.2X49</CollimatorSize> 
+                        # sizes in cm
+                        col_tag = "CollimatorSize"
+                        collimator_size = extra_info.find(col_tag).text
+                        y,x = [float(k) for k in collimator_size.split('X')]
+                        y1,y2 = (0,10*y)
+                        x1,x2 = (0,10*x)
+                        found_collimator = True
+                    except Exception:
+                        pass
+
+            except Exception:
+                pass
+                
             if found_collimator:
                 results[col_id["CollimatorLeft"]]['value'] = f"{x1:.1f}"
                 results[col_id["CollimatorRight"]]['value'] = f"{x2:.1f}"
